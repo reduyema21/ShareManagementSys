@@ -13,6 +13,12 @@ using SaccoShareManagementSys.Services.SaccoManagement.Services;
 //Role: Admin
 
 var builder = WebApplication.CreateBuilder(args);
+// Allow any host (Render will send requests from its domain)
+builder.WebHost.ConfigureKestrel(options =>
+{
+    options.AddServerHeader = false; // optional
+})
+.UseUrls("http://0.0.0.0:8080"); // Ensure app listens on all interfaces
 
 // Add services to the container.
 //builder.Services.AddControllersWithViews();
@@ -120,6 +126,11 @@ else
 {
     app.UseDeveloperExceptionPage();
 }
+
+// For hobby/demo, allow all hosts
+app.Urls.Clear();
+app.Urls.Add("http://0.0.0.0:8080");
+
 
 app.UseHttpsRedirection();
 app.UseStaticFiles();
