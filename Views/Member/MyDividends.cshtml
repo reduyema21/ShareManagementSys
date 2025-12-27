@@ -1,0 +1,35 @@
+﻿@model IEnumerable<SaccoShareManagementSys.Models.Dividend>?
+@{
+    ViewData["Title"] = "My Dividends";
+    Layout = "_Layout";
+}
+
+<h3>My Dividends</h3>
+
+<div class="mb-3">
+    <a class="btn btn-secondary" href="/Member/Index">Back</a>
+</div>
+
+@if (Model == null || !Model.Any())
+{
+    <div class="alert alert-info">No dividend records available for this member. If you want member-specific dividends, the Dividend model must be linked to Shareholder or you need to compute member share of each dividend.</div>
+}
+else
+{
+    <table class="table">
+        <thead>
+            <tr><th>Year</th><th>Month</th><th>Paid</th><th>Date</th></tr>
+        </thead>
+        <tbody>
+            @foreach (var d in Model)
+            {
+                <tr>
+                    <td>@d.Year</td>
+                    <td>@d.Month</td>
+                    <td>@d.TotalDividendPaid</td>
+                    <td>@d.DistributionDate.ToShortDateString()</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}

@@ -1,0 +1,388 @@
+﻿@model SaccoShareManagementSys.ViewModels.ShareholderIndexViewModel
+@{
+    ViewData["Title"] = "Shareholders";
+}
+
+<div class="container-fluid">
+    <!-- Page Header -->
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h2 class="mb-1">Shareholder Management</h2>
+            <p class="text-muted">Manage and track all shareholders</p>
+        </div>
+        <a asp-action="Create" class="btn btn-primary">
+            <i class="bi bi-plus-circle me-2"></i>Add New Shareholder
+        </a>
+    </div>
+
+    <!-- Alert Messages -->
+    @if (TempData["SuccessMessage"] != null)
+    {
+        <div class="alert alert-success alert-dismissible fade show" role="alert">
+            <i class="bi bi-check-circle me-2"></i>@TempData["SuccessMessage"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+    }
+    @if (TempData["ErrorMessage"] != null)
+    {
+        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+            <i class="bi bi-exclamation-triangle me-2"></i>@TempData["ErrorMessage"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+    }
+
+    @* <!-- Statistics Cards -->
+    <div class="row mb-4">
+        <div class="col-md-3 mb-3">
+            <div class="card border-0 shadow-sm">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-center mb-2">
+                        <h6 class="text-muted mb-0">Total Shareholders</h6>
+                        <div class="bg-primary bg-opacity-10 rounded p-2">
+                            <i class="bi bi-people text-primary"></i>
+                        </div>
+                    </div>
+                    <h3 class="mb-0">@Model.Statistics.TotalShareholders</h3>
+                    <small class="text-muted">Registered members</small>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-3 mb-3">
+            <div class="card border-0 shadow-sm">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-center mb-2">
+                        <h6 class="text-muted mb-0">Active Shareholders</h6>
+                        <div class="bg-success bg-opacity-10 rounded p-2">
+                            <i class="bi bi-person-check text-success"></i>
+                        </div>
+                    </div>
+                    <h3 class="mb-0">@Model.Statistics.ActiveShareholders</h3>
+                    <small class="text-success">
+                        @(Model.Statistics.TotalShareholders > 0 ?
+                                                ((decimal)Model.Statistics.ActiveShareholders / Model.Statistics.TotalShareholders * 100).ToString("F0") : "0")% active rate
+                    </small>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-3 mb-3">
+            <div class="card border-0 shadow-sm">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-center mb-2">
+                        <h6 class="text-muted mb-0">Total Portfolio Value</h6>
+                        <div class="bg-info bg-opacity-10 rounded p-2">
+                            <i class="bi bi-wallet2 text-info"></i>
+                        </div>
+                    </div>
+                    <h3 class="mb-0">ETB @((Model.Statistics.TotalPortfolioValue / 1000).ToString("N1"))K</h3>
+                    <small class="text-muted">Combined holdings</small>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-3 mb-3">
+            <div class="card border-0 shadow-sm">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-center mb-2">
+                        <h6 class="text-muted mb-0">Average Balance</h6>
+                        <div class="bg-warning bg-opacity-10 rounded p-2">
+                            <i class="bi bi-graph-up text-warning"></i>
+                        </div>
+                    </div>
+                    <h3 class="mb-0">ETB @Model.Statistics.AverageBalance.ToString("N0")</h3>
+                    <small class="text-muted">Per shareholder</small>
+                </div>
+            </div>
+        </div>
+    </div> *@
+    <div class="row mb-4">
+
+        <!-- 1. Total Shareholders -->
+        <div class="col-md-3 mb-3">
+            <div class="card border-0 shadow-sm h-100">
+                <div class="card-body d-flex justify-content-between align-items-start">
+                    <div>
+                        <h6 class="text-muted mb-1">Total Shareholders</h6>
+                        <h3 class="mb-0">@Model.Statistics.TotalShareholders</h3>
+                        <small class="text-muted">Registered members</small>
+                    </div>
+
+                    <!-- circle container: inline sizing, light bg, colored svg via text-* -->
+                    <div class="rounded-circle bg-primary bg-opacity-10 text-primary d-flex align-items-center justify-content-center"
+                         style="width:36px; height:36px; flex-shrink:0;">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"
+                             style="width:14px; height:14px; display:block;"
+                             fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2">
+                            <path d="M6 22V4a2 2 0 0 1 2-2h8l4 4v16a2 2 0 0 1-2 2z"></path>
+                            <path d="M14 2v6h6"></path>
+                        </svg>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 2. Active Shareholders -->
+        <div class="col-md-3 mb-3">
+            <div class="card border-0 shadow-sm h-100">
+                <div class="card-body d-flex justify-content-between align-items-start">
+                    <div>
+                        <h6 class="text-muted mb-1">Active Shareholders</h6>
+                        <h3 class="mb-0">@Model.Statistics.ActiveShareholders</h3>
+                        <small class="text-success">
+                            @(Model.Statistics.TotalShareholders > 0
+                                                        ? ((decimal)Model.Statistics.ActiveShareholders / Model.Statistics.TotalShareholders * 100).ToString("F0")
+                                                        : "0")% active rate
+                        </small>
+                    </div>
+
+                    <div class="rounded-circle bg-success bg-opacity-10 text-success d-flex align-items-center justify-content-center"
+                         style="width:36px; height:36px; flex-shrink:0;">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"
+                             style="width:14px; height:14px; display:block;"
+                             fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2">
+                            <path d="M16 7h6v6"></path>
+                            <path d="m22 7-8.5 8.5-5-5L2 17"></path>
+                        </svg>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 3. Total Portfolio Value -->
+        <div class="col-md-3 mb-3">
+            <div class="card border-0 shadow-sm h-100">
+                <div class="card-body d-flex justify-content-between align-items-start">
+                    <div>
+                        <h6 class="text-muted mb-1">Total Portfolio Value</h6>
+                        <h3 class="mb-0">ETB @((Model.Statistics.TotalPortfolioValue / 1000).ToString("N1"))K</h3>
+                        <small class="text-muted">Combined holdings</small>
+                    </div>
+
+                    <div class="rounded-circle bg-info bg-opacity-10 text-info d-flex align-items-center justify-content-center"
+                         style="width:36px; height:36px; flex-shrink:0;">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"
+                             style="width:14px; height:14px; display:block;"
+                             fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2">
+                            <path d="M19 7V4H5a2 2 0 0 0 0 4h14"></path>
+                            <path d="M3 5v14a2 2 0 0 0 2 2h14"></path>
+                        </svg>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 4. Average Balance -->
+        <div class="col-md-3 mb-3">
+            <div class="card border-0 shadow-sm h-100">
+                <div class="card-body d-flex justify-content-between align-items-start">
+                    <div>
+                        <h6 class="text-muted mb-1">Average Balance</h6>
+                        <h3 class="mb-0">ETB @Model.Statistics.AverageBalance.ToString("N0")</h3>
+                        <small class="text-muted">Per shareholder</small>
+                    </div>
+
+                    <div class="rounded-circle bg-warning bg-opacity-10 text-warning d-flex align-items-center justify-content-center"
+                         style="width:36px; height:36px; flex-shrink:0;">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"
+                             style="width:14px; height:14px; display:block;"
+                             fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2">
+                            <path d="M8 2v4"></path>
+                            <path d="M16 2v4"></path>
+                            <rect x="3" y="4" width="18" height="18" rx="2"></rect>
+                            <path d="M3 10h18"></path>
+                        </svg>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+
+    <!-- Shareholders Table -->
+    <div class="card border-0 shadow-sm">
+        <div class="card-header bg-white py-3">
+            <h5 class="mb-0">
+                <i class="bi bi-table me-2"></i>All Shareholders
+            </h5>
+        </div>
+
+        <!-- Filters -->
+        <div class="card-body border-bottom">
+            <form asp-action="Index" method="get">
+                <div class="row g-3">
+                    <div class="col-md-4">
+                        <div class="input-group">
+                            <span class="input-group-text"><i class="bi bi-search"></i></span>
+                            <input type="text" class="form-control" name="SearchTerm"
+                                   value="@Model.Filter.SearchTerm"
+                                   placeholder="Search by name, email, phone, or ID...">
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <select class="form-select" name="Status">
+                            <option value="all">All Status</option>
+                            <option value="Active" selected="@(Model.Filter.Status == "Active")">Active</option>
+                            <option value="Inactive" selected="@(Model.Filter.Status == "Inactive")">Inactive</option>
+                        </select>
+                    </div>
+                    <div class="col-md-3">
+                        <select class="form-select" name="MemberType">
+                            <option value="all">All Types</option>
+                            <option value="New" selected="@(Model.Filter.MemberType == "New")">New</option>
+                            <option value="Active" selected="@(Model.Filter.MemberType == "Active")">Active</option>
+                            <option value="Premium" selected="@(Model.Filter.MemberType == "Premium")">Premium</option>
+                        </select>
+                    </div>
+                    <div class="col-md-2">
+                        <div class="d-grid gap-2">
+                            <button type="submit" class="btn btn-primary">
+                                <i class="bi bi-funnel me-2"></i>Filter
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </form>
+        </div>
+
+        <div class="card-body p-0">
+            @if (Model.Shareholders.Any())
+            {
+                <div class="table-responsive">
+                    <table class="table table-hover mb-0">
+                        <thead class="table-light">
+                            <tr>
+                                <th>ID</th>
+                                <th>Shareholder</th>
+                                <th>Contact</th>
+                                <th>Join Date</th>
+                                <th class="text-end">Total Shares</th>
+                                <th class="text-end">Balance</th>
+                                <th class="text-center">Certificates</th>
+                                <th>Type</th>
+                                <th>Status</th>
+                                <th class="text-center">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var shareholder in Model.Shareholders)
+                            {
+                                <tr>
+                                    <td>
+                                        <span class="font-monospace">#@shareholder.ShareholderId.ToString("D4")</span>
+                                    </td>
+                                    <td>
+                                        <strong>@shareholder.FullName</strong>
+                                    </td>
+                                    <td>
+                                        <div>
+                                            <small class="d-block">
+                                                <i class="bi bi-envelope me-1"></i>@shareholder.Email
+                                            </small>
+                                            <small class="text-muted">
+                                                <i class="bi bi-telephone me-1"></i>@shareholder.Phone
+                                            </small>
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <small>
+                                            <i class="bi bi-calendar3 me-1"></i>@shareholder.JoinDate.ToString("dd MMM yyyy")
+                                        </small>
+                                    </td>
+                                    <td class="text-end">
+                                        <strong>@shareholder.TotalShares.ToString("N0")</strong>
+                                    </td>
+                                    <td class="text-end">
+                                        <strong>ETB @shareholder.CurrentBalance.ToString("N2")</strong>
+                                    </td>
+                                    <td class="text-center">
+                                        <span class="badge bg-secondary">@shareholder.NumberOfCertificates</span>
+                                    </td>
+                                    <td>
+                                        @if (shareholder.MemberType == "Premium")
+                                        {
+                                            <span class="badge bg-purple">
+                                                <i class="bi bi-star-fill me-1"></i>Premium
+                                            </span>
+                                        }
+                                        else if (shareholder.MemberType == "New")
+                                        {
+                                            <span class="badge bg-info">
+                                                <i class="bi bi-person-plus me-1"></i>New
+                                            </span>
+                                        }
+                                        else
+                                        {
+                                            <span class="badge bg-success">
+                                                <i class="bi bi-person-check me-1"></i>Active
+                                            </span>
+                                        }
+                                    </td>
+                                    <td>
+                                        @if (shareholder.Status == "Active")
+                                        {
+                                            <span class="badge bg-success">Active</span>
+                                        }
+                                        else
+                                        {
+                                            <span class="badge bg-secondary">Inactive</span>
+                                        }
+                                    </td>
+                                    <td class="text-center">
+                                        <div class="btn-group btn-group-sm">
+                                            <a asp-action="Details" asp-route-id="@shareholder.ShareholderId"
+                                               class="btn btn-outline-primary" title="View Details">
+                                                <i class="bi bi-eye"></i>
+                                            </a>
+                                            <a asp-action="Edit" asp-route-id="@shareholder.ShareholderId"
+                                               class="btn btn-outline-secondary" title="Edit">
+                                                <i class="bi bi-pencil"></i>
+                                            </a>
+                                            <a asp-action="Delete" asp-route-id="@shareholder.ShareholderId"
+                                               class="btn btn-outline-danger" title="Delete">
+                                                <i class="bi bi-trash"></i>
+                                            </a>
+                                        </div>
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            }
+            else
+            {
+                <div class="text-center py-5">
+                    <i class="bi bi-inbox display-4 text-muted"></i>
+                    <p class="text-muted mt-3">No shareholders found.</p>
+                    <a asp-action="Create" class="btn btn-primary">Add New Shareholder</a>
+                </div>
+            }
+        </div>
+
+        @if (Model.Shareholders.Any())
+        {
+            <div class="card-footer bg-white">
+                <p class="text-muted mb-0">
+                    Showing @Model.Shareholders.Count of @Model.Statistics.TotalShareholders shareholders
+                </p>
+            </div>
+        }
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        // Auto-dismiss alerts
+        setTimeout(function() {
+            $('.alert').alert('close');
+        }, 5000);
+    </script>
+}
+
+<style>
+    .bg-purple {
+        background-color: #6f42c1 !important;
+    }
+</style>

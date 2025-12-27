@@ -1,0 +1,92 @@
+﻿@model SaccoShareManagementSys.Models.Share
+@{
+    ViewData["Title"] = "Share Details";
+}
+
+<div class="container-fluid">
+    <h2>Share Certificate Details</h2>
+
+    <div class="card shadow-sm border-0">
+        <div class="card-body">
+            <dl class="row">
+                <dt class="col-sm-3">Shareholder</dt>
+                <dd class="col-sm-9">@Model.Shareholder?.FullName (#@Model.ShareholderId.ToString("D4"))</dd>
+
+                <dt class="col-sm-3">Certificate Number</dt>
+                <dd class="col-sm-9">@Model.CertificateNumber</dd>
+
+                <dt class="col-sm-3">Share Type</dt>
+                <dd class="col-sm-9">@Model.ShareType</dd>
+
+                <dt class="col-sm-3">Number of Shares</dt>
+                <dd class="col-sm-9">@Model.NumberOfShares.ToString("N2")</dd>
+
+                <dt class="col-sm-3">Share Value (KES)</dt>
+                <dd class="col-sm-9">@Model.ShareValue.ToString("N2")</dd>
+
+                <dt class="col-sm-3">Total Value</dt>
+                <dd class="col-sm-9">@((Model.NumberOfShares * Model.ShareValue).ToString("N2")) KES</dd>
+
+                <dt class="col-sm-3">Purchase Date</dt>
+                <dd class="col-sm-9">@Model.PurchaseDate.ToString("dd MMM yyyy")</dd>
+
+                <dt class="col-sm-3">Maturity Date</dt>
+                <dd class="col-sm-9">@(Model.MaturityDate.HasValue ? Model.MaturityDate.Value.ToString("dd MMM yyyy") : "-")</dd>
+
+                <dt class="col-sm-3">Status</dt>
+                <dd class="col-sm-9">@Model.Status</dd>
+
+                <dt class="col-sm-3">Notes</dt>
+                <dd class="col-sm-9">@(string.IsNullOrWhiteSpace(Model.Notes) ? "-" : Model.Notes)</dd>
+
+                <dt class="col-sm-3">Created At</dt>
+                <dd class="col-sm-9">@Model.CreatedAt.ToString("dd MMM yyyy")</dd>
+
+                <dt class="col-sm-3">Updated At</dt>
+                <dd class="col-sm-9">@(Model.UpdatedAt.HasValue ? Model.UpdatedAt.Value.ToString("dd MMM yyyy") : "-")</dd>
+            </dl>
+
+            <a asp-action="Edit" asp-route-id="@Model.ShareId" class="btn btn-success">
+                <i class="bi bi-pencil me-1"></i>Edit
+            </a>
+            <a asp-action="Index" class="btn btn-secondary">Back to List</a>
+        </div>
+    </div>
+</div>
+
+
+@* @model SaccoShareManagementSys.Models.Share
+
+@{
+    ViewData["Title"] = "Share Details";
+}
+
+<h2>Share Details</h2>
+
+<div>
+    <dl class="row">
+        <dt class="col-sm-2">Share ID</dt>
+        <dd class="col-sm-10">@Model.ShareId</dd>
+
+        <dt class="col-sm-2">Shareholder ID</dt>
+        <dd class="col-sm-10">@Model.ShareholderId</dd>
+
+        <dt class="col-sm-2">Share Type</dt>
+        <dd class="col-sm-10">@Model.ShareType</dd>
+
+        <dt class="col-sm-2">Amount</dt>
+        <dd class="col-sm-10">@Model.InitialAmount</dd>
+
+        <dt class="col-sm-2">Current Balance</dt>
+        <dd class="col-sm-10">@Model.CurrentBalance</dd>
+
+        <dt class="col-sm-2">Issue Date</dt>
+        <dd class="col-sm-10">@Model.IssueDate.ToShortDateString()</dd>
+
+        <dt class="col-sm-2">Transactions</dt>
+        <dd class="col-sm-10">@Model.Transactions</dd>
+    </dl>
+</div>
+
+<a asp-action="Edit" asp-route-id="@Model.ShareId" class="btn btn-primary">Edit</a>
+<a asp-action="Index" class="btn btn-secondary">Back to List</a> *@

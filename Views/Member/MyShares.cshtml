@@ -1,0 +1,44 @@
+﻿@model IEnumerable<SaccoShareManagementSys.Models.Share>?
+@{
+    ViewData["Title"] = "My Shares";
+    Layout = "_Layout";
+}
+
+<h3>My Shares</h3>
+
+<div class="mb-3">
+    <a class="btn btn-primary" href="/Member/Index">Back to Dashboard</a>
+</div>
+
+@if (Model == null || !Model.Any())
+{
+    <div class="alert alert-info">No shares to display. (If you expect shares, make sure the controller passes a list of shares.)</div>
+}
+else
+{
+    <table class="table table-bordered">
+        <thead>
+            <tr>
+                <th>Certificate #</th>
+                <th>Type</th>
+                <th>No. of Shares</th>
+                <th>Value</th>
+                <th>Purchase Date</th>
+                <th>Status</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var s in Model)
+            {
+                <tr>
+                    <td>@s.CertificateNumber</td>
+                    <td>@s.ShareType</td>
+                    <td>@s.NumberOfShares</td>
+                    <td>@s.ShareValue</td>
+                    <td>@s.PurchaseDate.ToShortDateString()</td>
+                    <td>@s.Status</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}

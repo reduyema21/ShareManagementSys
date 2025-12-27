@@ -1,0 +1,224 @@
+﻿@model SaccoShareManagementSys.Models.Shareholder
+@{
+    ViewData["Title"] = "Shareholder Details";
+}
+
+<div class="container">
+    <div class="row justify-content-center">
+        <div class="col-lg-10">
+            <!-- Page Header -->
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <div>
+                    <h2 class="mb-1">Shareholder Details</h2>
+                    <p class="text-muted">ID: #@Model.ShareholderId.ToString("D4")</p>
+                </div>
+                <div class="btn-group">
+                    <a asp-action="Edit" asp-route-id="@Model.ShareholderId" class="btn btn-primary">
+                        <i class="bi bi-pencil me-2"></i>Edit
+                    </a>
+                    <a asp-action="Index" class="btn btn-outline-secondary">
+                        <i class="bi bi-arrow-left me-2"></i>Back to List
+                    </a>
+                </div>
+            </div>
+
+            <!-- Alert Messages -->
+            @if (TempData["SuccessMessage"] != null)
+            {
+                <div class="alert alert-success alert-dismissible fade show" role="alert">
+                    <i class="bi bi-check-circle me-2"></i>@TempData["SuccessMessage"]
+                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                </div>
+            }
+
+            <!-- Profile Card -->
+            <div class="row mb-4">
+                <div class="col-md-4">
+                    <div class="card border-0 shadow-sm">
+                        <div class="card-body text-center p-4">
+                            <div class="mb-3">
+                                <div class="bg-primary bg-opacity-10 rounded-circle d-inline-flex p-4">
+                                    <i class="bi bi-person-circle display-3 text-primary"></i>
+                                </div>
+                            </div>
+                            <h4 class="mb-1">@Model.FullName</h4>
+                            <p class="text-muted mb-3">Member #@Model.ShareholderId.ToString("D4")</p>
+
+                            <div class="d-flex justify-content-center gap-2 mb-3">
+                                @if (Model.Status == "Active")
+                                {
+                                    <span class="badge bg-success">@Model.Status</span>
+                                }
+                                else
+                                {
+                                    <span class="badge bg-secondary">@Model.Status</span>
+                                }
+
+                                @if (Model.MemberType == "Premium")
+                                {
+                                    <span class="badge bg-purple">
+                                        <i class="bi bi-star-fill me-1"></i>@Model.MemberType
+                                    </span>
+                                }
+                                else if (Model.MemberType == "New")
+                                {
+                                    <span class="badge bg-info">@Model.MemberType</span>
+                                }
+                                else
+                                {
+                                    <span class="badge bg-success">@Model.MemberType</span>
+                                }
+                            </div>
+
+                            <hr>
+
+                            <div class="text-start">
+                                <p class="mb-2">
+                                    <i class="bi bi-envelope me-2 text-primary"></i>
+                                    <small>@Model.Email</small>
+                                </p>
+                                <p class="mb-2">
+                                    <i class="bi bi-telephone me-2 text-primary"></i>
+                                    <small>@Model.Phone</small>
+                                </p>
+                                @if (!string.IsNullOrEmpty(Model.Address))
+                                {
+                                    <p class="mb-0">
+                                        <i class="bi bi-geo-alt me-2 text-primary"></i>
+                                        <small>@Model.Address @(!string.IsNullOrEmpty(Model.City) ? ", " + Model.City : "")</small>
+                                    </p>
+                                }
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-md-8">
+                    <!-- Financial Summary -->
+                    <div class="card border-0 shadow-sm mb-3">
+                        <div class="card-header bg-gradient-primary text-white py-3">
+                            <h5 class="mb-0">
+                                <i class="bi bi-wallet2 me-2"></i>Financial Summary
+                            </h5>
+                        </div>
+                        <div class="card-body">
+                            <div class="row text-center">
+                                <div class="col-md-4 mb-3 mb-md-0">
+                                    <div class="p-3 bg-light rounded">
+                                        <i class="bi bi-graph-up text-primary display-6"></i>
+                                        <h4 class="mt-2 mb-1">@Model.TotalShares.ToString("N0")</h4>
+                                        <small class="text-muted">Total Shares</small>
+                                    </div>
+                                </div>
+                                <div class="col-md-4 mb-3 mb-md-0">
+                                    <div class="p-3 bg-light rounded">
+                                        <i class="bi bi-cash-stack text-success display-6"></i>
+                                        <h4 class="mt-2 mb-1">ETB @Model.CurrentBalance.ToString("N2")</h4>
+                                        <small class="text-muted">Current Balance</small>
+                                    </div>
+                                </div>
+                                <div class="col-md-4">
+                                    <div class="p-3 bg-light rounded">
+                                        <i class="bi bi-file-earmark-text text-info display-6"></i>
+                                        <h4 class="mt-2 mb-1">@Model.NumberOfCertificates</h4>
+                                        <small class="text-muted">Certificates</small>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Personal Information -->
+                    <div class="card border-0 shadow-sm">
+                        <div class="card-header bg-white py-3">
+                            <h5 class="mb-0">
+                                <i class="bi bi-person-vcard me-2"></i>Personal Information
+                            </h5>
+                        </div>
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="col-md-6 mb-3">
+                                    <label class="text-muted mb-1">Full Name</label>
+                                    <p class="mb-0"><strong>@Model.FullName</strong></p>
+                                </div>
+                                @if (!string.IsNullOrEmpty(Model.IdNumber))
+                                {
+                                    <div class="col-md-6 mb-3">
+                                        <label class="text-muted mb-1">ID/Passport Number</label>
+                                        <p class="mb-0"><strong>@Model.IdNumber</strong></p>
+                                    </div>
+                                }
+                                @if (Model.DateOfBirth.HasValue)
+                                {
+                                    <div class="col-md-6 mb-3">
+                                        <label class="text-muted mb-1">Date of Birth</label>
+                                        <p class="mb-0"><strong>@Model.DateOfBirth.Value.ToString("dd MMMM yyyy")</strong></p>
+                                        <small class="text-muted">
+                                            Age: @((DateTime.Now.Year - Model.DateOfBirth.Value.Year)) years
+                                        </small>
+                                    </div>
+                                }
+                                @if (!string.IsNullOrEmpty(Model.Gender))
+                                {
+                                    <div class="col-md-6 mb-3">
+                                        <label class="text-muted mb-1">Gender</label>
+                                        <p class="mb-0"><strong>@Model.Gender</strong></p>
+                                    </div>
+                                }
+                                <div class="col-md-6 mb-3">
+                                    <label class="text-muted mb-1">Join Date</label>
+                                    <p class="mb-0"><strong>@Model.JoinDate.ToString("dd MMMM yyyy")</strong></p>
+                                    <small class="text-muted">
+                                        Member for @((DateTime.Now - Model.JoinDate).Days) days
+                                    </small>
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <label class="text-muted mb-1">Account Created</label>
+                                    <p class="mb-0"><strong>@Model.CreatedAt.ToString("dd MMM yyyy, hh:mm tt")</strong></p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Action Buttons -->
+            <div class="card border-0 shadow-sm">
+                <div class="card-body">
+                    <div class="row g-2">
+                        <div class="col-md-3">
+                            <a href="#" class="btn btn-outline-primary w-100">
+                                <i class="bi bi-file-earmark-text me-2"></i>View Shares
+                            </a>
+                        </div>
+                        <div class="col-md-3">
+                            <a href="#" class="btn btn-outline-secondary w-100">
+                                <i class="bi bi-arrow-left-right me-2"></i>View Transactions
+                            </a>
+                        </div>
+                        <div class="col-md-3">
+                            <a asp-controller="ShareTransfers" asp-action="Create" class="btn btn-outline-info w-100">
+                                <i class="bi bi-arrow-right-circle me-2"></i>Transfer Shares
+                            </a>
+                        </div>
+                        <div class="col-md-3">
+                            <a asp-action="Delete" asp-route-id="@Model.ShareholderId" class="btn btn-outline-danger w-100">
+                                <i class="bi bi-trash me-2"></i>Delete
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .bg-gradient-primary {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    }
+
+    .bg-purple {
+        background-color: #6f42c1 !important;
+    }
+</style>

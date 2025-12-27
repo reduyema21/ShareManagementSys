@@ -1,0 +1,366 @@
+﻿@model SaccoShareManagementSys.ViewModels.TransactionIndexViewModel
+@using System.Text.Json
+@{
+    ViewData["Title"] = "Transactions";
+
+    // Safe monthly calculations
+    var monthlyTotal = Model.Statistics.MonthlyCredits + Model.Statistics.MonthlyDebits;
+    var creditPercentage = monthlyTotal > 0 ? (Model.Statistics.MonthlyCredits / monthlyTotal) * 100 : 0;
+    var debitPercentage = monthlyTotal > 0 ? (Model.Statistics.MonthlyDebits / monthlyTotal) * 100 : 0;
+}
+
+<div class="container-fluid">
+    <!-- Page Header -->
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h2 class="mb-1">Transaction Management</h2>
+            <p class="text-muted">Manage all financial transactions</p>
+        </div>
+        <a asp-action="Create" class="btn btn-primary">
+            <i class="bi bi-plus-circle me-2"></i>New Transaction
+        </a>
+    </div>
+
+    <!-- Alert Messages -->
+    @if (TempData["SuccessMessage"] != null)
+    {
+        <div class="alert alert-success alert-dismissible fade show" role="alert">
+            <i class="bi bi-check-circle me-2"></i>@TempData["SuccessMessage"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+    }
+    @if (TempData["ErrorMessage"] != null)
+    {
+        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+            <i class="bi bi-exclamation-triangle me-2"></i>@TempData["ErrorMessage"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+    }
+
+    <!-- Statistics Cards -->
+    <div class="row mb-4">
+        <div class="col-md-3 mb-3">
+            <div class="card border-0 shadow-sm">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-center mb-2">
+                        <h6 class="text-muted mb-0">Total Transactions</h6>
+                        <div class="bg-primary bg-opacity-10 rounded p-2 d-flex align-items-center justify-content-center">
+                            <!-- Calendar SVG -->
+                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
+                                 stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                                 class="lucide lucide-calendar w-4 h-4 text-blue-600" aria-hidden="true">
+                                <path d="M8 2v4"></path>
+                                <path d="M16 2v4"></path>
+                                <rect width="18" height="18" x="3" y="4" rx="2"></rect>
+                                <path d="M3 10h18"></path>
+                            </svg>
+                        </div>
+
+                    </div>
+                    <h3 class="mb-0">@Model.Statistics.TotalTransactions</h3>
+                    <small class="text-muted">All time</small>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3 mb-3">
+            <div class="card border-0 shadow-sm">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-center mb-2">
+                        <h6 class="text-muted mb-0">Total Credits</h6>
+                        <div class="bg-success bg-opacity-10 rounded p-2 d-flex align-items-center justify-content-center">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
+                                 stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                                 class="lucide lucide-circle-arrow-up w-4 h-4 text-green-600" aria-hidden="true">
+                                <circle cx="12" cy="12" r="10"></circle>
+                                <path d="m16 12-4-4-4 4"></path>
+                                <path d="M12 16V8"></path>
+                            </svg>
+                        </div>
+
+                    </div>
+                    <h3 class="mb-0">ETB @((Model.Statistics.TotalCredits / 1000).ToString("N1"))K</h3>
+                    <small class="text-success">Incoming</small>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3 mb-3">
+            <div class="card border-0 shadow-sm">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-center mb-2">
+                        <h6 class="text-muted mb-0">Total Debits</h6>
+                        <div class="bg-danger bg-opacity-10 rounded p-2 d-flex align-items-center justify-content-center">
+                            <!-- Circle Arrow Down SVG -->
+                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
+                                 stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                                 class="lucide lucide-circle-arrow-down w-4 h-4 text-red-600" aria-hidden="true">
+                                <circle cx="12" cy="12" r="10"></circle>
+                                <path d="M12 8v8"></path>
+                                <path d="m8 12 4 4 4-4"></path>
+                            </svg>
+                        </div>
+                    </div>
+                    <h3 class="mb-0">ETB @((Model.Statistics.TotalDebits / 1000).ToString("N1"))K</h3>
+                    <small class="text-danger">Outgoing</small>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3 mb-3">
+            <div class="card border-0 shadow-sm">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-center mb-2">
+                        <h6 class="text-muted mb-0">Net Balance</h6>
+                        <div class="bg-info bg-opacity-10 rounded p-2 d-flex align-items-center justify-content-center">
+                            <!-- Trending Up SVG -->
+                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
+                                 stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                                 class="lucide lucide-trending-up w-4 h-4 text-green-600" aria-hidden="true">
+                                <path d="M16 7h6v6"></path>
+                                <path d="m22 7-8.5 8.5-5-5L2 17"></path>
+                            </svg>
+                        </div>
+                    </div>
+                    <h3 class="mb-0">ETB @((Model.Statistics.NetBalance / 1000).ToString("N1"))K</h3>
+                    <small class="text-muted">Credits - Debits</small>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Transactions Table -->
+    <div class="card border-0 shadow-sm mb-4">
+        <div class="card-header bg-white py-3">
+            <h5 class="mb-0"><i class="bi bi-table me-2"></i>All Transactions</h5>
+        </div>
+        <div class="card-body p-0">
+            @if (Model.Transactions.Any())
+            {
+                <div class="table-responsive">
+                    <table class="table table-hover mb-0">
+                        <thead class="table-light">
+                            <tr>
+                                <th>ID</th>
+                                <th>Date</th>
+                                <th>Shareholder</th>
+                                <th>Certificate</th>
+                                <th>Type</th>
+                                <th class="text-end">Amount</th>
+                                <th>Description</th>
+                                <th>Payment</th>
+                                <th>Status</th>
+                                <th class="text-center">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var transaction in Model.Transactions.OrderByDescending(t => t.TransactionDate))
+                            {
+                                <tr>
+                                    <td><span class="font-monospace">#@transaction.TransactionId.ToString("D4")</span></td>
+                                    <td>
+                                        <small>@transaction.TransactionDate.ToString("dd MMM yyyy")</small>
+                                        <br><small class="text-muted">@transaction.TransactionDate.ToString("hh:mm tt")</small>
+                                    </td>
+                                    <td><strong>@transaction.ShareholderName</strong></td>
+                                    <td><small>@transaction.ShareCertificateNumber</small></td>
+                                    <td>
+                                        @if (transaction.TransactionType == "Credit" || transaction.TransactionType == "Deposit")
+                                        {
+                                            <span class="badge bg-success"><i class="bi bi-arrow-down me-1"></i>@transaction.TransactionType</span>
+                                        }
+                                        else if (transaction.TransactionType == "Debit" || transaction.TransactionType == "Withdrawal")
+                                        {
+                                            <span class="badge bg-danger"><i class="bi bi-arrow-up me-1"></i>@transaction.TransactionType</span>
+                                        }
+                                        else
+                                        {
+                                            <span class="badge bg-info">@transaction.TransactionType</span>
+                                        }
+                                    </td>
+                                    <td class="text-end">
+                                        <strong class="@(transaction.TransactionType == "Credit" || transaction.TransactionType == "Deposit" ? "text-success" : "text-danger")">
+                                            @(transaction.TransactionType == "Credit" || transaction.TransactionType == "Deposit" ? "+" : "-") @transaction.Amount.ToString("N2") Birr
+                                        </strong>
+                                    </td>
+                                    <td><small>@transaction.Description</small></td>
+                                    <td><small>@(transaction.PaymentMethod ?? "-")</small></td>
+                                    <td>
+                                        @if (transaction.Status == "Completed")
+                                        {
+                                            <span class="badge bg-success">@transaction.Status</span>
+                                        }
+                                        else if (transaction.Status == "Pending")
+                                        {
+                                            <span class="badge bg-warning">@transaction.Status</span>
+                                        }
+                                        else
+                                        {
+                                            <span class="badge bg-danger">@transaction.Status</span>
+                                        }
+                                    </td>
+                                    <td class="text-center">
+                                        <div class="btn-group btn-group-sm">
+                                            <a asp-action="Details" asp-route-id="@transaction.TransactionId" class="btn btn-outline-primary" title="View Details">
+                                                <i class="bi bi-eye"></i>
+                                            </a>
+                                            <a asp-action="Edit" asp-route-id="@transaction.TransactionId" class="btn btn-outline-secondary" title="Edit">
+                                                <i class="bi bi-pencil"></i>
+                                            </a>
+                                            <a asp-action="Delete" asp-route-id="@transaction.TransactionId" class="btn btn-outline-danger" title="Delete">
+                                                <i class="bi bi-trash"></i>
+                                            </a>
+                                        </div>
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            }
+            else
+            {
+                <div class="text-center py-5">
+                    <i class="bi bi-inbox display-4 text-muted"></i>
+                    <p class="text-muted mt-3">No transactions found.</p>
+                    <a asp-action="Create" class="btn btn-primary">Create Transaction</a>
+                </div>
+            }
+        </div>
+    </div>
+
+<div class="container-fluid">
+
+    <div class="row mt-4">
+
+        <!-- Top: Transaction Flow Chart -->
+        <div class="col-12 mb-4">
+            <div class="card border-0 shadow-sm h-100">
+                <div class="card-header bg-white py-3">
+                    <h5 class="mb-0"><i class="bi bi-bar-chart me-2"></i>Transaction Flow (Credit vs Debit)</h5>
+                </div>
+                <div class="card-body" style="height: 300px;">
+                    <canvas id="transactionFlowChart"></canvas>
+                </div>
+            </div>
+        </div>
+
+        <!-- Bottom: Recent Activity + This Month Summary Side by Side -->
+<div class="col-12">
+    <div class="row">
+
+        <!-- Recent Activity -->
+        <div class="col-md-6 mb-4">
+            <div class="card border-0 shadow-sm" style="height: 300px;"> <!-- fixed height -->
+                <div class="card-header bg-white border-bottom">
+                    <h6 class="mb-0"><i class="bi bi-clock-history me-2"></i>Recent Activity</h6>
+                </div>
+                <div class="card-body p-0" style="overflow-y: auto; max-height: 230px;"> <!-- scrollable content -->
+                    <div class="list-group list-group-flush">
+                        @foreach (var transaction in Model.Transactions.OrderByDescending(t => t.TransactionDate).Take(6))
+                        {
+                            <div class="list-group-item">
+                                <div class="d-flex justify-content-between align-items-start">
+                                    <div class="flex-grow-1">
+                                        <div class="d-flex align-items-center mb-1">
+                                            <div class="bg-@(transaction.TransactionType == "Credit" || transaction.TransactionType == "Deposit" ? "success" : "danger") bg-opacity-10 rounded-circle p-2 me-2">
+                                                <i class="bi @(transaction.TransactionType == "Credit" || transaction.TransactionType == "Deposit" ? "bi-arrow-down-circle text-success" : "bi-arrow-up-circle text-danger")"></i>
+                                            </div>
+                                            <strong class="small">@transaction.TransactionType</strong>
+                                        </div>
+                                        <p class="mb-1 small">@transaction.Description</p>
+                                        <div class="d-flex justify-content-between align-items-center">
+                                            <small class="text-muted"><i class="bi bi-person me-1"></i>@transaction.ShareholderName</small>
+                                            <strong class="text-@(GetAmountColor(transaction.TransactionType))">@transaction.Amount.ToString("N0") Birr</strong>
+                                        </div>
+                                        <small class="text-muted"><i class="bi bi-clock me-1"></i>@transaction.TransactionDate.ToString("MMM dd, HH:mm")</small>
+                                    </div>
+                                </div>
+                            </div>
+                        }
+                    </div>
+                </div>
+                <div class="card-footer bg-white text-center">
+                    <a href="#" class="text-primary small">View All</a>
+                </div>
+            </div>
+        </div>
+      </<div>
+
+        <!-- This Month Summary -->
+        <div class="col-md-6 mb-4">
+            <div class="card border-0 shadow-sm" style="height: 300px;"> <!-- fixed height -->
+                <div class="card-header bg-white border-bottom">
+                    <h6 class="mb-0"><i class="bi bi-graph-up me-2"></i>This Month Summary</h6>
+                </div>
+                <div class="card-body" style="overflow-y: auto; max-height: 230px;">
+                    <div class="mb-3">
+                        <div class="d-flex justify-content-between mb-2">
+                            <span class="small text-muted">Credits</span>
+                            <strong class="text-success">@Model.Statistics.MonthlyCredits.ToString("N0") Birr</strong>
+                        </div>
+                        <div class="progress" style="height: 8px;">
+                            <div class="progress-bar bg-success" style="width: @creditPercentage.ToString("F0")%"></div>
+                        </div>
+                    </div>
+                    <div class="mb-3">
+                        <div class="d-flex justify-content-between mb-2">
+                            <span class="small text-muted">Debits</span>
+                            <strong class="text-danger">@Model.Statistics.MonthlyDebits.ToString("N0") Birr</strong>
+                        </div>
+                        <div class="progress" style="height: 8px;">
+                            <div class="progress-bar bg-danger" style="width: @debitPercentage.ToString("F0")%"></div>
+                        </div>
+                    </div>
+                    <hr>
+                    <div class="d-flex justify-content-between">
+                        <span class="small">Net This Month</span>
+                        <strong class="text-info">@((Model.Statistics.MonthlyCredits - Model.Statistics.MonthlyDebits).ToString("N0")) Birr</strong>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+
+            </div>
+        </div>
+
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        setTimeout(function() { $('.alert').alert('close'); }, 5000);
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script>
+        async function loadTransactionFlow() {
+            const response = await fetch('/Transactions/GetTransactionFlow');
+            const result = await response.json();
+
+            const flowCtx = document.getElementById('transactionFlowChart').getContext('2d');
+            new Chart(flowCtx, {
+                type: 'bar',
+                data: {
+                    labels: result.months, //to populate the x-axis
+                    datasets: [
+                        { label: 'Credits', data: result.credits, backgroundColor: 'rgba(25, 135, 84, 0.7)', borderColor: 'rgb(25, 135, 84)', borderWidth: 1 },
+                        { label: 'Debits', data: result.debits, backgroundColor: 'rgba(220, 53, 69, 0.7)', borderColor: 'rgb(220, 53, 69)', borderWidth: 1 }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: { y: { beginAtZero: true, ticks: { callback: function(v) { return 'Birr ' + (v/1000) + 'K'; } } } },
+                    plugins: { legend: { display: true, position: 'top' }, tooltip: { callbacks: { label: ctx => ctx.dataset.label + ': Birr ' + ctx.parsed.y.toLocaleString() } } }
+                }
+            });
+        }
+        loadTransactionFlow();
+    </script>
+}
+
+@functions {
+    string GetAmountColor(string type) => type == "Purchase" || type == "Dividend" ? "success" : "danger";
+}
+

@@ -1,0 +1,173 @@
+﻿@model SaccoShareManagementSys.ViewModels.DividendViewModel
+@{
+    ViewData["Title"] = "Create Dividend";
+}
+
+<div class="container-fluid">
+    <!-- Page Header -->
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h2 class="mb-1">Create Dividend Record</h2>
+            <p class="text-muted">Create a new dividend distribution record</p>
+        </div>
+        <a asp-action="Index" class="btn btn-outline-secondary">
+            <i class="bi bi-arrow-left me-2"></i>Back to List
+        </a>
+    </div>
+
+    <!-- Create Form -->
+    <div class="row">
+        <div class="col-lg-8 mx-auto">
+            <div class="card border-0 shadow-sm">
+                <div class="card-header bg-primary text-white">
+                    <h5 class="mb-0">
+                        <i class="bi bi-plus-circle me-2"></i>Dividend Information
+                    </h5>
+                </div>
+                <div class="card-body p-4">
+                    <form asp-action="Create" method="post">
+                        <div asp-validation-summary="ModelOnly" class="alert alert-danger"></div>
+
+                        <!-- Period Information -->
+                        <div class="row mb-4">
+                            <div class="col-12">
+                                <h6 class="text-primary mb-3">
+                                    <i class="bi bi-calendar3 me-2"></i>Dividend Period
+                                </h6>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label asp-for="Year" class="form-label"></label>
+                                <select asp-for="Year" asp-items="Model.Years" class="form-select">
+                                    <option value="">-- Select Year --</option>
+                                </select>
+                                <span asp-validation-for="Year" class="text-danger small"></span>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label asp-for="Month" class="form-label"></label>
+                                <select asp-for="Month" asp-items="Model.Months" class="form-select">
+                                    <option value="">-- Select Month --</option>
+                                </select>
+                                <span asp-validation-for="Month" class="text-danger small"></span>
+                            </div>
+                        </div>
+
+                        <hr class="my-4">
+
+                        <!-- Financial Information -->
+                        <div class="row mb-4">
+                            <div class="col-12">
+                                <h6 class="text-primary mb-3">
+                                    <i class="bi bi-cash-stack me-2"></i>Financial Details
+                                </h6>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label asp-for="TotalProfit" class="form-label"></label>
+                                <div class="input-group">
+                                    <span class="input-group-text">ETB</span>
+                                    <input asp-for="TotalProfit" class="form-control" placeholder="0.00" id="totalProfit" />
+                                </div>
+                                <span asp-validation-for="TotalProfit" class="text-danger small"></span>
+                                <small class="form-text text-muted">Total profit available for distribution</small>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label asp-for="TotalShares" class="form-label"></label>
+                                <input asp-for="TotalShares" class="form-control" placeholder="0.00" id="totalShares" />
+                                <span asp-validation-for="TotalShares" class="text-danger small"></span>
+                                <small class="form-text text-muted">Total number of shares</small>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label asp-for="DividendRate" class="form-label"></label>
+                                <div class="input-group">
+                                    <input asp-for="DividendRate" class="form-control" placeholder="0.00" id="dividendRate" />
+                                    <span class="input-group-text">%</span>
+                                </div>
+                                <span asp-validation-for="DividendRate" class="text-danger small"></span>
+                                <small class="form-text text-muted">Percentage of profit to distribute</small>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label">Total Dividend to be Paid (Calculated)</label>
+                                <div class="input-group">
+                                    <span class="input-group-text">ETB</span>
+                                    <input type="text" class="form-control bg-light" id="calculatedDividend" readonly />
+                                </div>
+                                <small class="form-text text-muted">Auto-calculated based on profit × rate</small>
+                            </div>
+                        </div>
+
+                        <hr class="my-4">
+
+                        <!-- Distribution Information -->
+                        <div class="row mb-4">
+                            <div class="col-12">
+                                <h6 class="text-primary mb-3">
+                                    <i class="bi bi-calendar-check me-2"></i>Distribution Details
+                                </h6>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label asp-for="DistributionDate" class="form-label"></label>
+                                <input asp-for="DistributionDate" type="date" class="form-control" />
+                                <span asp-validation-for="DistributionDate" class="text-danger small"></span>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label asp-for="Status" class="form-label"></label>
+                                <select asp-for="Status" asp-items="Model.StatusList" class="form-select">
+                                    <option value="">-- Select Status --</option>
+                                </select>
+                                <span asp-validation-for="Status" class="text-danger small"></span>
+                            </div>
+                            <div class="col-12 mb-3">
+                                <label asp-for="Notes" class="form-label"></label>
+                                <textarea asp-for="Notes" class="form-control" rows="3" placeholder="Optional notes about this dividend..."></textarea>
+                                <span asp-validation-for="Notes" class="text-danger small"></span>
+                            </div>
+                        </div>
+
+                        <!-- Action Buttons -->
+                        <div class="d-flex justify-content-between pt-3 border-top">
+                            <a asp-action="Index" class="btn btn-outline-secondary">
+                                <i class="bi bi-x-circle me-2"></i>Cancel
+                            </a>
+                            <button type="submit" class="btn btn-primary">
+                                <i class="bi bi-check-circle me-2"></i>Create Dividend
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            <!-- Help Card -->
+            <div class="card border-0 shadow-sm mt-4 bg-light">
+                <div class="card-body">
+                    <h6 class="mb-3"><i class="bi bi-info-circle me-2"></i>Important Information</h6>
+                    <ul class="mb-0 small">
+                        <li>Dividend rate is the percentage of total profit to be distributed</li>
+                        <li>Total dividend paid will be automatically calculated as: Profit × (Rate / 100)</li>
+                        <li>Only one dividend can be created per month/year period</li>
+                        <li>Set status to "Pending" for review or "Approved" if ready for distribution</li>
+                        <li>Use the Distribution Date to specify when dividends will be paid</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+    <script>
+        // Calculate dividend automatically
+        function calculateDividend() {
+            const profit = parseFloat($('#totalProfit').val()) || 0;
+            const rate = parseFloat($('#dividendRate').val()) || 0;
+            const calculated = profit * (rate / 100);
+            $('#calculatedDividend').val(calculated.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 }));
+        }
+
+        $(document).ready(function() {
+            $('#totalProfit, #dividendRate').on('input', calculateDividend);
+            calculateDividend();
+        });
+    </script>
+}

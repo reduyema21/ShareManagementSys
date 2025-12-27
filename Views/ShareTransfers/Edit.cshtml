@@ -1,0 +1,137 @@
+﻿@model SaccoShareManagementSys.ViewModels.ShareTransferViewModel
+@{
+    ViewData["Title"] = "Edit Share Transfer";
+}
+
+<div class="container-fluid">
+    <!-- Page Header -->
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h2 class="mb-1">Edit Share Transfer</h2>
+            <p class="text-muted">Modify share transfer information</p>
+        </div>
+        <div class="btn-group">
+            <a asp-action="Details" asp-route-id="@Model.TransferId" class="btn btn-outline-info">
+                <i class="bi bi-eye me-2"></i>View Details
+            </a>
+            <a asp-action="Index" class="btn btn-outline-secondary">
+                <i class="bi bi-arrow-left me-2"></i>Back to List
+            </a>
+        </div>
+    </div>
+
+    <!-- Edit Form -->
+    <div class="row">
+        <div class="col-lg-8 mx-auto">
+            <div class="card border-0 shadow-sm">
+                <div class="card-header bg-warning text-dark">
+                    <h5 class="mb-0">
+                        <i class="bi bi-pencil-square me-2"></i>Edit Transfer #@Model.TransferId
+                    </h5>
+                </div>
+                <div class="card-body p-4">
+                    <form asp-action="Edit" method="post">
+                        <input type="hidden" asp-for="TransferId" />
+                        <div asp-validation-summary="ModelOnly" class="alert alert-danger"></div>
+
+                        <!-- Shareholder Information (Read-only) -->
+                        <div class="row mb-4">
+                            <div class="col-12">
+                                <h6 class="text-warning mb-3">
+                                    <i class="bi bi-people me-2"></i>Shareholder Information
+                                </h6>
+                                <div class="alert alert-warning">
+                                    <i class="bi bi-info-circle me-2"></i>
+                                    Shareholder details cannot be changed after transfer creation
+                                </div>
+                            </div>
+
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label">From Shareholder</label>
+                                <input type="text" class="form-control bg-light"
+                                       value="@Model.FromShareholderName" readonly />
+                                <input type="hidden" asp-for="FromShareholderId" />
+                            </div>
+
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label">To Shareholder</label>
+                                <input type="text" class="form-control bg-light"
+                                       value="@Model.ToShareholderName" readonly />
+                                <input type="hidden" asp-for="ToShareholderId" />
+                            </div>
+                        </div>
+
+                        <hr class="my-4">
+
+                        <!-- Transfer Details -->
+                        <div class="row mb-4">
+                            <div class="col-12">
+                                <h6 class="text-warning mb-3">
+                                    <i class="bi bi-cash-stack me-2"></i>Transfer Details
+                                </h6>
+                            </div>
+
+                            <div class="col-md-6 mb-3">
+                                <label asp-for="ShareAmount" class="form-label"></label>
+                                <div class="input-group">
+                                    <span class="input-group-text">ETB</span>
+                                    <input asp-for="ShareAmount" class="form-control" />
+                                </div>
+                                <span asp-validation-for="ShareAmount" class="text-danger small"></span>
+                            </div>
+
+                            <div class="col-md-6 mb-3">
+                                <label asp-for="TransferDate" class="form-label"></label>
+                                <input asp-for="TransferDate" type="date" class="form-control" />
+                                <span asp-validation-for="TransferDate" class="text-danger small"></span>
+                            </div>
+
+                            <div class="col-md-6 mb-3">
+                                <label asp-for="Status" class="form-label"></label>
+                                <select asp-for="Status" asp-items="Model.StatusList" class="form-select">
+                                    <option value="">-- Select Status --</option>
+                                </select>
+                                <span asp-validation-for="Status" class="text-danger small"></span>
+                            </div>
+
+                            <div class="col-12 mb-3">
+                                <label asp-for="Notes" class="form-label"></label>
+                                <textarea asp-for="Notes" class="form-control" rows="3"></textarea>
+                                <span asp-validation-for="Notes" class="text-danger small"></span>
+                            </div>
+                        </div>
+
+                        <!-- Action Buttons -->
+                        <div class="d-flex justify-content-between pt-3 border-top">
+                            <a asp-action="Index" class="btn btn-outline-secondary">
+                                <i class="bi bi-x-circle me-2"></i>Cancel
+                            </a>
+                            <button type="submit" class="btn btn-warning">
+                                <i class="bi bi-check-circle me-2"></i>Update Transfer
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            <!-- Warning Card -->
+            <div class="card border-warning mt-4">
+                <div class="card-body">
+                    <h6 class="text-warning mb-3"><i class="bi bi-exclamation-triangle me-2"></i>Important Notes</h6>
+                    <ul class="mb-0 small">
+                        <li>Changing the share amount will update shareholder balances</li>
+                        <li>Shareholder identities cannot be changed after transfer creation</li>
+                        <li>Status changes may affect reporting and reconciliation</li>
+                        <li>Consider creating a reversal transfer instead of editing completed transfers</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}

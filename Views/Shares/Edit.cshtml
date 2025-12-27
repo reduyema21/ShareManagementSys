@@ -1,0 +1,140 @@
+﻿@model SaccoShareManagementSys.ViewModels.ShareViewModel
+@{
+    ViewData["Title"] = "Edit Share Certificate";
+}
+
+<div class="container-fluid">
+    <h2>Edit Share Certificate</h2>
+
+    <div class="card shadow-sm border-0">
+        <div class="card-body">
+            <form asp-action="Edit" method="post">
+                <input type="hidden" asp-for="ShareId" />
+
+                <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
+
+                <div class="mb-3">
+                    <label asp-for="ShareholderId" class="form-label"></label>
+                    <select asp-for="ShareholderId" class="form-select" asp-items="Model.Shareholders"></select>
+                    <span asp-validation-for="ShareholderId" class="text-danger"></span>
+                </div>
+
+                <div class="mb-3">
+                    <label asp-for="CertificateNumber" class="form-label"></label>
+                    <input asp-for="CertificateNumber" class="form-control" />
+                    <span asp-validation-for="CertificateNumber" class="text-danger"></span>
+                </div>
+
+                <div class="mb-3">
+                    <label asp-for="ShareType" class="form-label"></label>
+                    <select asp-for="ShareType" class="form-select" asp-items="Model.ShareTypes"></select>
+                    <span asp-validation-for="ShareType" class="text-danger"></span>
+                </div>
+
+                <div class="mb-3">
+                    <label asp-for="NumberOfShares" class="form-label"></label>
+                    <input asp-for="NumberOfShares" class="form-control" />
+                    <span asp-validation-for="NumberOfShares" class="text-danger"></span>
+                </div>
+
+                <div class="mb-3">
+                    <label asp-for="ShareValue" class="form-label"></label>
+                    <input asp-for="ShareValue" class="form-control" />
+                    <span asp-validation-for="ShareValue" class="text-danger"></span>
+                </div>
+
+                <div class="mb-3">
+                    <label asp-for="PurchaseDate" class="form-label"></label>
+                    <input asp-for="PurchaseDate" class="form-control" type="date" />
+                    <span asp-validation-for="PurchaseDate" class="text-danger"></span>
+                </div>
+
+                <div class="mb-3">
+                    <label asp-for="Status" class="form-label"></label>
+                    <select asp-for="Status" class="form-select" asp-items="Model.StatusList"></select>
+                    <span asp-validation-for="Status" class="text-danger"></span>
+                </div>
+
+                <div class="mb-3">
+                    <label asp-for="MaturityDate" class="form-label"></label>
+                    <input asp-for="MaturityDate" class="form-control" type="date" />
+                    <span asp-validation-for="MaturityDate" class="text-danger"></span>
+                </div>
+
+                <div class="mb-3">
+                    <label asp-for="Notes" class="form-label"></label>
+                    <textarea asp-for="Notes" class="form-control"></textarea>
+                    <span asp-validation-for="Notes" class="text-danger"></span>
+                </div>
+
+                <button type="submit" class="btn btn-success">
+                    <i class="bi bi-save me-1"></i>Save Changes
+                </button>
+                <a asp-action="Index" class="btn btn-secondary">Cancel</a>
+            </form>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}
+
+
+@* @model SaccoShareManagementSys.Models.Share
+
+@{
+    ViewData["Title"] = "Edit Share";
+}
+
+<h2>Edit Share</h2>
+
+<form asp-action="Edit" method="post">
+    <!-- Hidden field for ShareId -->
+    <input type="hidden" asp-for="ShareId" />
+
+    <div class="form-group">
+        <label asp-for="ShareholderId" class="control-label">Shareholder</label>
+        <select asp-for="ShareholderId" class="form-control" asp-items="ViewBag.ShareholderId">
+            <option value="">-- Select Shareholder --</option>
+        </select>
+        <span asp-validation-for="ShareholderId" class="text-danger"></span>
+    </div>
+
+    <div class="mb-3">
+        <label asp-for="ShareType" class="form-label"></label>
+        <input asp-for="ShareType" class="form-control" />
+        <span asp-validation-for="ShareType" class="text-danger"></span>
+    </div>
+
+    <div class="mb-3">
+        <label asp-for="InitialAmount" class="form-label"></label>
+        <input asp-for="InitialAmount" class="form-control" />
+        <span asp-validation-for="InitialAmount" class="text-danger"></span>
+    </div>
+
+    <div class="mb-3">
+        <label asp-for="CurrentBalance" class="form-label"></label>
+        <input asp-for="CurrentBalance" class="form-control" />
+        <span asp-validation-for="CurrentBalance" class="text-danger"></span>
+    </div>
+
+    <div class="mb-3">
+        <label asp-for="IssueDate" class="form-label"></label>
+        <input asp-for="IssueDate" type="date" class="form-control" />
+        <span asp-validation-for="IssueDate" class="text-danger"></span>
+    </div>
+
+    <div class="form-group">
+        <label asp-for="Transactions" class="form-label"></label>
+        <input asp-for="Transactions" type="number" class="form-control" />
+        <span asp-validation-for="Transactions" class="text-danger"></span>
+    </div>
+
+    <button type="submit" class="btn btn-primary">Save</button>
+    <a asp-action="Index" class="btn btn-secondary">Back to List</a>
+</form>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+} *@

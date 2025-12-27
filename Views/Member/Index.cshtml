@@ -1,0 +1,114 @@
+﻿@model SaccoShareManagementSys.ViewModels.MemberDashboardViewModel
+@{
+    ViewData["Title"] = "Member Dashboard";
+    Layout = "_Layout";
+}
+
+<div class="container-fluid">
+    <h2 class="mb-3">👤 Member Dashboard</h2>
+
+    <div class="row mb-4">
+        <div class="col-md-4">
+            <div class="card p-3 shadow-sm">
+                <h6 class="text-muted">Total Shares</h6>
+                <h3>@Model.TotalShares</h3>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card p-3 shadow-sm">
+                <h6 class="text-muted">Total Share Value (KES)</h6>
+                <h3>@Model.TotalShareValue</h3>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card p-3 shadow-sm">
+                <h6 class="text-muted">Total Dividends (KES)</h6>
+                <h3>@Model.TotalDividends</h3>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+
+        <div class="col-lg-6 mb-4">
+            <div class="card shadow-sm p-3">
+                <h5>Last Transaction</h5>
+                @if (Model.LastTransaction != null)
+                {
+                    <p><strong>Date:</strong> @Model.LastTransaction.TransactionDate.ToShortDateString()</p>
+                    <p><strong>Type:</strong> @Model.LastTransaction.TransactionType</p>
+                    <p><strong>Amount:</strong> KES @Model.LastTransaction.Amount</p>
+                    <p><strong>Description:</strong> @Model.LastTransaction.Description</p>
+                }
+                else
+                {
+                    <p class="text-muted">No transactions yet.</p>
+                }
+            </div>
+        </div>
+
+        <div class="col-lg-6 mb-4">
+            <div class="card shadow-sm p-3">
+                <h5>Share Transfer Requests (recent)</h5>
+                @if (Model.AllTransfers.Any())
+                {
+                    <table class="table table-sm">
+                        <thead>
+                            <tr>
+                                <th>From</th>
+                                <th>To</th>
+                                <th>Amount (KES)</th>
+                                <th>Status</th>
+                                <th>Date</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var r in Model.AllTransfers.Take(6))
+                            {
+                                <tr>
+                                    <td>@(r.FromShareholder?.FullName ?? r.FromShareholderId.ToString())</td>
+                                    <td>@(r.ToShareholder?.FullName ?? r.ToShareholderId.ToString())</td>
+                                    <td>@r.ShareAmount</td>
+                                    <td>@r.Status</td>
+                                    <td>@r.TransferDate.ToShortDateString()</td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                }
+                else
+                {
+                    <p class="text-muted">No transfer requests available.</p>
+                }
+            </div>
+        </div>
+
+    </div>
+
+    <div class="card p-3 shadow-sm mb-4">
+        <h5>Recent Transactions</h5>
+        @if (Model.RecentTransactions.Any())
+        {
+            <table class="table table-striped">
+                <thead>
+                    <tr><th>Date</th><th>Type</th><th>Amount (KES)</th><th>Description</th></tr>
+                </thead>
+                <tbody>
+                    @foreach (var t in Model.RecentTransactions.Take(8))
+                    {
+                        <tr>
+                            <td>@t.TransactionDate.ToShortDateString()</td>
+                            <td>@t.TransactionType</td>
+                            <td>@t.Amount</td>
+                            <td>@t.Description</td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        }
+        else
+        {
+            <p class="text-muted">No recent transactions.</p>
+        }
+    </div>
+</div>

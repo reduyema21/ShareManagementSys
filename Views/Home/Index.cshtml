@@ -1,0 +1,671 @@
+﻿@model SaccoShareManagementSys.ViewModels.DashboardViewModel
+@using System.Text.Json
+@using SaccoShareManagementSys.ViewModels
+@{
+    ViewData["Title"] = "Dashboard";
+}
+
+<div class="container-fluid">
+    <h2 class="mb-4">Dashboard</h2>
+
+    @* <!-- Summary Cards with REAL DATA -->
+    <div class="row mb-4">
+        <!-- Total Shareholders -->
+        <div class="col-md-3">
+            <div class="card text-center">
+                <div class="card-body">
+                    <!-- Circle + Icon -->
+                    <div class="d-flex justify-content-center align-items-center mb-3" style="width: 50px; height: 50px;">
+                        <div class="rounded-circle bg-primary bg-opacity-10 d-flex justify-content-center align-items-center w-100 h-100">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-trending-up text-primary">
+                                <path d="M16 7h6v6"></path>
+                                <path d="m22 7-8.5 8.5-5-5L2 17"></path>
+                            </svg>
+                        </div>
+                    </div>
+
+                    <h6 class="text-muted">Total Shareholders</h6>
+                    <h2>@Model.TotalShareholders</h2>
+                    <small class="text-success">@Model.ActiveShareholders active</small>
+                </div>
+            </div>
+        </div>
+
+        <!-- Total Shares Value -->
+        <div class="col-md-3">
+            <div class="card text-center">
+                <div class="card-body">
+                    <div class="d-flex justify-content-center align-items-center mb-3" style="width: 50px; height: 50px;">
+                        <div class="rounded-circle bg-primary bg-opacity-10 d-flex justify-content-center align-items-center w-100 h-100">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-wallet text-primary">
+                                <path d="M19 7V4a1 1 0 0 0-1-1H5a2 2 0 0 0 0 4h15a1 1 0 0 1 1 1v4h-3a2 2 0 0 0 0 4h3a1 1 0 0 0 1-1v-2a1 1 0 0 0-1-1"></path>
+                                <path d="M3 5v14a2 2 0 0 0 2 2h15a1 1 0 0 0 1-1v-4"></path>
+                            </svg>
+                        </div>
+                    </div>
+
+                    <h6 class="text-muted">Total Shares Value</h6>
+                    <h2>KES @((Model.TotalSharesValue / 1000).ToString("N0"))K</h2>
+                    <small class="text-muted">@Model.TotalCertificates certificates</small>
+                </div>
+            </div>
+        </div>
+
+        <!-- Total Transactions -->
+        <div class="col-md-3">
+            <div class="card text-center">
+                <div class="card-body">
+                    <div class="d-flex justify-content-center align-items-center mb-3" style="width: 50px; height: 50px;">
+                        <div class="rounded-circle bg-primary bg-opacity-10 d-flex justify-content-center align-items-center w-100 h-100">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-users text-primary">
+                                <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"></path>
+                                <path d="M16 3.128a4 4 0 0 1 0 7.744"></path>
+                                <path d="M22 21v-2a4 4 0 0 0-3-3.87"></path>
+                                <circle cx="9" cy="7" r="4"></circle>
+                            </svg>
+                        </div>
+                    </div>
+
+                    <h6 class="text-muted">Total Transactions</h6>
+                    <h2>@Model.TotalTransactions</h2>
+                    <small class="text-muted">@Model.MonthlyTransactions this month</small>
+                </div>
+            </div>
+        </div>
+
+        <!-- Dividends Paid -->
+        <div class="col-md-3">
+            <div class="card text-center">
+                <div class="card-body">
+                    <div class="d-flex justify-content-center align-items-center mb-3" style="width: 50px; height: 50px;">
+                        <div class="rounded-circle bg-primary bg-opacity-10 d-flex justify-content-center align-items-center w-100 h-100">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-dollar-sign text-primary">
+                                <line x1="12" x2="12" y1="2" y2="22"></line>
+                                <path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path>
+                            </svg>
+                        </div>
+                    </div>
+
+                    <h6 class="text-muted">Dividends Paid</h6>
+                    <h2>KES @((Model.TotalDividendsPaid / 1000).ToString("N0"))K</h2>
+                    <small class="text-muted">YTD Total</small>
+                </div>
+            </div>
+        </div>
+    </div> *@
+    <div class="row mb-4">
+        <!-- Card 1: Total Shareholders -->
+        <div class="col-md-3">
+            <div class="card border-0 shadow-sm">
+                <div class="card-body d-flex align-items-center">
+                    <div class="rounded-circle d-flex justify-content-center align-items-center me-3"
+                         style="width:50px; height:50px; border:2px solid #0d6efd;">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" stroke="currentColor"
+                             stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                             class="lucide lucide-trending-up text-primary">
+                            <path d="M16 7h6v6"></path>
+                            <path d="m22 7-8.5 8.5-5-5L2 17"></path>
+                        </svg>
+                    </div>
+                    <div>
+                        <h6 class="text-muted mb-1">Total Shareholders</h6>
+                        <h4 class="mb-0">@Model.TotalShareholders</h4>
+                        <small class="text-success">@Model.ActiveShareholders active</small>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Card 2: Total Shares Value -->
+        <div class="col-md-3">
+            <div class="card border-0 shadow-sm">
+                <div class="card-body d-flex align-items-center">
+                    <div class="rounded-circle d-flex justify-content-center align-items-center me-3"
+                         style="width:50px; height:50px; border:2px solid #0d6efd;">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" stroke="currentColor"
+                             stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                             class="lucide lucide-users text-primary">
+                            <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"></path>
+                            <path d="M16 3.128a4 4 0 0 1 0 7.744"></path>
+                            <path d="M22 21v-2a4 4 0 0 0-3-3.87"></path>
+                            <circle cx="9" cy="7" r="4"></circle>
+                        </svg>
+                    </div>
+                    <div>
+                        <h6 class="text-muted mb-1">Total Shares Value</h6>
+                        <h4 class="mb-0">KES @((Model.TotalSharesValue / 1000).ToString("N0"))K</h4>
+                        <small class="text-muted">@Model.TotalCertificates certificates</small>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Card 3: Total Transactions -->
+        <div class="col-md-3">
+            <div class="card border-0 shadow-sm">
+                <div class="card-body d-flex align-items-center">
+                    <div class="rounded-circle d-flex justify-content-center align-items-center me-3"
+                         style="width:50px; height:50px; border:2px solid #0d6efd;">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" stroke="currentColor"
+                             stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                             class="lucide lucide-wallet text-primary">
+                            <path d="M19 7V4a1 1 0 0 0-1-1H5a2 2 0 0 0 0 4h15a1 1 0 0 1 1 1v4h-3a2 2 0 0 0 0 4h3a1 1 0 0 0 1-1v-2a1 1 0 0 0-1-1"></path>
+                            <path d="M3 5v14a2 2 0 0 0 2 2h15a1 1 0 0 0 1-1v-4"></path>
+                        </svg>
+                    </div>
+                    <div>
+                        <h6 class="text-muted mb-1">Total Transactions</h6>
+                        <h4 class="mb-0">@Model.TotalTransactions</h4>
+                        <small class="text-muted">@Model.MonthlyTransactions this month</small>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Card 4: Dividends Paid -->
+        <div class="col-md-3">
+            <div class="card border-0 shadow-sm">
+                <div class="card-body d-flex align-items-center">
+                    <div class="rounded-circle d-flex justify-content-center align-items-center me-3"
+                         style="width:50px; height:50px; border:2px solid #0d6efd;">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" stroke="currentColor"
+                             stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                             class="lucide lucide-dollar-sign text-primary">
+                            <line x1="12" x2="12" y1="2" y2="22"></line>
+                            <path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path>
+                        </svg>
+                    </div>
+                    <div>
+                        <h6 class="text-muted mb-1">Dividends Paid</h6>
+                        <h4 class="mb-0">KES @((Model.TotalDividendsPaid / 1000).ToString("N0"))K</h4>
+                        <small class="text-muted">YTD Total</small>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+
+
+
+    <div class="row">
+        <!-- Charts Row -->
+        <div class="col-lg-8">
+            <div class="row">
+                <!-- Share Growth Trend Chart -->
+                <div class="col-md-6">
+                    <div class="card mb-4">
+                        <div class="card-header">
+                            <h5>Share Growth Trend</h5>
+                        </div>
+                        <div class="card-body">
+                            <canvas id="shareGrowthChart" style="height:300px;"></canvas>
+
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Member Distribution Chart -->
+                <div class="col-md-6">
+                    <div class="card mb-4">
+                        <div class="card-header">
+                            <h5>Member Distribution</h5>
+                        </div>
+                        <div class="card-body">
+                            <canvas id="memberDistributionChart" height="150"></canvas>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Top Shareholders Table -->
+            <div class="card">
+                <div class="card-header">
+                    <h5>Top Shareholders</h5>
+                </div>
+                <div class="card-body">
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th>Rank</th>
+                                <th>Name</th>
+                                <th>Total Shares</th>
+                                <th>Balance</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @for (int i = 0; i < Model.TopShareholders.Count; i++)
+                            {
+                                var shareholder = Model.TopShareholders[i];
+                                <tr>
+                                    <td>#@(i + 1)</td>
+                                    <td>@shareholder.FullName</td>
+                                    <td>@shareholder.TotalShares.ToString("N2")</td>
+                                    <td>KES @shareholder.CurrentBalance.ToString("N0")</td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- Recent Activity Column -->
+        <div class="col-lg-4">
+            <div class="card">
+                <div class="card-header">
+                    <h6>Recent Activity</h6>
+                </div>
+                <div class="card-body">
+                    @foreach (var activity in Model.RecentActivities)
+                    {
+                        <div class="mb-3">
+                            <strong class="small">@activity.Title</strong>
+                            <p class="mb-1 small text-muted">@activity.Description</p>
+                            <small class="text-muted">@activity.Timestamp.ToString("MMM dd, HH:mm")</small>
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+
+
+@section Scripts {
+    
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    
+    <script id="shareGrowthData" type="application/json">
+        @Html.Raw(JsonSerializer.Serialize(Model.ShareGrowthData ?? new List<MonthlyShareData>())) 
+    </script>
+
+    <script id="memberDistData" type="application/json">
+        @Html.Raw(JsonSerializer.Serialize(new {
+            active = Model.MemberDistribution?.ActiveMembers ?? 0,
+                inactive = Model.MemberDistribution?.InactiveMembers ?? 0,
+                premium = Model.MemberDistribution?.PremiumMembers ?? 0,
+                newMembers = Model.MemberDistribution?.NewMembers ?? 0
+        }))
+</script>
+
+<script>
+
+    const rawShareData = document.getElementById('shareGrowthData').textContent;
+    const parsedShareData = JSON.parse(rawShareData);
+
+    const shareLabels = parsedShareData.map(x => x.MonthName);
+    const shareValues = parsedShareData.map(x => x.TotalSharesValue);
+    const newShareholders = parsedShareData.map(x => x.NewShareholders);
+
+    const shareCtx = document.getElementById('shareGrowthChart').getContext('2d');
+    new Chart(shareCtx, {
+        type: 'line',
+        data: {
+            labels: shareLabels,
+            datasets: [
+                {
+                    label: 'Total Share Value (ETB)',
+                    data: shareValues,
+                    borderColor: 'rgb(25, 135, 84)',
+                    backgroundColor: 'rgba(25, 135, 84, 0.1)',
+                    fill: true,
+                    tension: 0.4
+                },
+                {
+                    label: 'New Shareholders',
+                    data: newShareholders,
+                    borderColor: 'rgb(13, 110, 253)',
+                    backgroundColor: 'rgba(13, 110, 253, 0.1)',
+                    fill: true,
+                    tension: 0.4,
+                    yAxisID: 'y1'
+                }
+            ]
+        },
+        options: {
+            responsive: true,
+            interaction: {
+                mode: 'index',
+                intersect: false
+            },
+                plugins: {
+                    tooltip: {
+                        callbacks: {
+                            label: function(context) {
+                                if (context.dataset.label === "Total Share Value (ETB)") {
+                                    return 'ETB ' + context.parsed.y.toLocaleString();
+                                }
+                                if (context.dataset.label === "New Shareholders") {
+                                    return context.parsed.y + ' new';
+                                }
+                            }
+                        }
+                    }
+                },
+
+            scales: {
+                y: {
+                    type: 'linear',
+                    display: true,
+                    position: 'left',
+                    ticks: {
+                        callback: function(value) {
+                            return 'ETB ' + (value / 1000) + 'birr';
+                        }
+                    }
+                },
+                y1: {
+                    type: 'linear',
+                    display: true,
+                    position: 'right',
+                    grid: { drawOnChartArea: false }
+                }
+            }
+        }
+    });
+
+    const rawMemberData = document.getElementById('memberDistData').textContent;
+    const memberDist = JSON.parse(rawMemberData);
+
+    const memberCtx = document.getElementById('memberDistributionChart').getContext('2d');
+    new Chart(memberCtx, {
+        type: 'doughnut',
+        data: {
+            labels: ['Active', 'Inactive', 'Premium', 'New (Last Month)'],
+            datasets: [{
+                data: [
+                    memberDist.active,
+                    memberDist.inactive,
+                    memberDist.premium,
+                    memberDist.newMembers
+                ],
+                backgroundColor: [
+                    'rgba(25, 135, 84, 0.8)',
+                    'rgba(220, 53, 69, 0.8)',
+                    'rgba(255, 193, 7, 0.8)',
+                    'rgba(13, 110, 253, 0.8)'
+                ]
+            }]
+        },
+        options: {
+            responsive: true,
+            plugins: {
+                legend: { position: 'right' }
+            }
+        }
+    });
+</script>
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+@* @{
+    Layout = "_Layout";
+    ViewData["Title"] = "Dashboard";
+}
+<h1>Welcome to the Dashboard</h1>
+<p>You are logged in as @User.Identity?.Name</p>
+
+<div class="container mt-4">
+    <div class="row g-4">
+
+        <!-- Total Shares -->
+        <div class="col-md-3">
+            <div class="card shadow-sm border-0 rounded-4 p-3">
+                <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                        <p class="text-muted mb-1">Total Shares</p>
+                        <h4 class="fw-bold mb-0">92,450</h4>
+                        <p class="text-success small mb-0">+8.2% from last month</p>
+                    </div>
+                    <div class="bg-light rounded-3 p-2">
+                        <i class="fas fa-chart-line text-secondary fs-4"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Total Members -->
+        <div class="col-md-3">
+            <div class="card shadow-sm border-0 rounded-4 p-3">
+                <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                        <p class="text-muted mb-1">Total Members</p>
+                        <h4 class="fw-bold mb-0">700</h4>
+                        <p class="text-success small mb-0">+12 new this month</p>
+                    </div>
+                    <div class="bg-light rounded-3 p-2">
+                        <i class="fas fa-users text-secondary fs-4"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Share Value -->
+        <div class="col-md-3">
+            <div class="card shadow-sm border-0 rounded-4 p-3">
+                <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                        <p class="text-muted mb-1">Share Value</p>
+                        <h4 class="fw-bold mb-0">4.6M Birr</h4>
+                        <p class="text-success small mb-0">+5.7% from last month</p>
+                    </div>
+                    <div class="bg-light rounded-3 p-2">
+                        <i class="fas fa-wallet text-secondary fs-4"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Dividends Paid -->
+        <div class="col-md-3">
+            <div class="card shadow-sm border-0 rounded-4 p-3">
+                <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                        <p class="text-muted mb-1">Dividends Paid</p>
+                        <h4 class="fw-bold mb-0">385K Birr</h4>
+                        <p class="text-muted small mb-0">This quarter</p>
+                    </div>
+                    <div class="bg-light rounded-3 p-2">
+                        <i class="fas fa-dollar-sign text-secondary fs-4"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+</div>
+<section class="my-4">
+    <div class="container">
+        <div class="row g-4">
+            
+            <!-- Chart.js CDN (only once at top) -->
+            <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+            <!-- Share Growth Trend Card -->
+            <div class="col-lg-6 col-md-12 mb-4">
+                <div class="card shadow-sm h-100">
+                    <div class="card-body">
+                        <h5 class="card-title">Share Growth Trend</h5>
+                        <p class="text-muted mb-3">Monthly share performance</p>
+                        <canvas id="shareGrowthChart" style="height: 300px; width: 100%; display:block;"></canvas>
+                    </div>
+                </div>
+            </div>
+
+            <script>
+                const ctxLine = document.getElementById('shareGrowthChart').getContext('2d');
+                const shareGrowthChart = new Chart(ctxLine, {
+                  type: 'line',
+                  data: {
+                    labels: ['Jan', 'Apr', 'Jul', 'Oct'],
+                    datasets: [
+                      {
+                        label: 'Total Shares',
+                        data: [2392300, 2389546, 2391120, 2387381],
+                        borderColor: '#0d6efd',
+                        backgroundColor: 'rgba(13, 110, 253, 0.2)',
+                        tension: 0.4,
+                        fill: true,
+                        pointRadius: 3,
+                        pointBackgroundColor: '#fff',
+                        pointBorderColor: '#0d6efd'
+                      },
+                      {
+                        label: 'Value (KES)',
+                        data: [1525000, 1387333, 1466000, 600067],
+                        borderColor: '#198754',
+                        backgroundColor: 'rgba(25, 135, 84, 0.2)',
+                        tension: 0.4,
+                        fill: true,
+                        pointRadius: 3,
+                        pointBackgroundColor: '#fff',
+                        pointBorderColor: '#198754'
+                      }
+                    ]
+                  },
+                  options: {
+                    responsive: true,
+                    plugins: { legend: { position: 'bottom' }, tooltip: { mode: 'index', intersect: false } },
+                    interaction: { mode: 'nearest', axis: 'x', intersect: false },
+                    scales: { y: { beginAtZero: true } }
+                  }
+                });
+            </script>
+
+            <!-- Member Distribution (Pie Chart) -->
+            <div class="col-lg-6 col-md-12">
+                <div class="card h-100">
+                    <div class="card-body">
+                        <h5 class="card-title">Member Distribution</h5>
+                        <p class="card-text text-muted">By membership status</p>
+                        <canvas id="memberDistributionChart" style="width:100%; height:300px; display:block;"></canvas>
+                    </div>
+                </div>
+            </div>
+
+            <script>
+                const ctxPie = document.getElementById('memberDistributionChart').getContext('2d');
+                const memberDistributionChart = new Chart(ctxPie, {
+                  type: 'pie',
+                  data: {
+                    labels: ['Active Members', 'Inactive Members', 'New Members', 'Pending Approval'],
+                    datasets: [{
+                      data: [64, 12, 17, 6],
+                      backgroundColor: [
+                        'hsl(200, 70%, 50%)',
+                        'hsl(0, 70%, 50%)',
+                        'hsl(100, 70%, 50%)',
+                        'hsl(50, 70%, 50%)'
+                      ],
+                      borderColor: '#fff',
+                      borderWidth: 2
+                    }]
+                  },
+                  options: {
+                    responsive: true,
+                    plugins: {
+                      legend: { position: 'bottom' },
+                      tooltip: {
+                        callbacks: {
+                          label: function(context) {
+                            return context.label + ': ' + context.raw + '%';
+                          }
+                        }
+                      }
+                    }
+                  }
+                });
+            </script>
+
+            </div>
+        </div>
+</section>
+
+@* Recent Transaction *@
+
+@* <div class="lg:col-span-2">
+    <div class="bg-card text-card-foreground flex flex-col gap-6 rounded-xl border p-6">
+        <div class="mb-6">
+            <h3>Recent Transactions</h3>
+            <p class="text-muted-foreground mt-1">Latest share transactions</p>
+        </div>
+        <div class="overflow-auto">
+            <div class="relative w-full overflow-x-auto">
+                <table class="w-full caption-bottom text-sm">
+                    <thead class="[&_tr]:border-b">
+                        <tr class="hover:bg-muted/50 border-b transition-colors">
+                            <th class="text-left px-2 py-2 font-medium">Transaction ID</th>
+                            <th class="text-left px-2 py-2 font-medium">Member</th>
+                            <th class="text-left px-2 py-2 font-medium">Type</th>
+                            <th class="text-left px-2 py-2 font-medium">Shares</th>
+                            <th class="text-left px-2 py-2 font-medium">Amount (KES)</th>
+                            <th class="text-left px-2 py-2 font-medium">Date</th>
+                            <th class="text-left px-2 py-2 font-medium">Status</th>
+                        </tr>
+                    </thead>
+                    <tbody id="transactionsBody">
+                        <!-- Transaction rows will be inserted here -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        const transactions = [
+            { id: "TXN001", member: "Rekik Leggese", type: "Purchase", shares: 500, amount: 25000, date: "2025-10-27", status: "completed" },
+            { id: "TXN002", member: "Firehiwot Tsega", type: "Purchase", shares: 300, amount: 15000, date: "2025-10-27", status: "completed" },
+            { id: "TXN003", member: "Rediet Tsega", type: "Sale", shares: 100, amount: 5000, date: "2025-10-28", status: "pending" },
+            { id: "TXN004", member: "Esmael Et", type: "Purchase", shares: 400, amount: 20000, date: "2025-10-28", status: "completed" },
+            { id: "TXN005", member: "Yigrem Belayihun", type: "Sale", shares: 200, amount: 10000, date: "2025-10-29", status: "completed" }
+        ];
+
+        const tbody = document.getElementById("transactionsBody");
+
+        transactions.forEach(txn => {
+            const tr = document.createElement("tr");
+            tr.className = "hover:bg-muted/50 border-b transition-colors";
+
+            tr.innerHTML = `
+                <td class="px-2 py-2">${txn.id}</td>
+                <td class="px-2 py-2">${txn.member}</td>
+                <td class="px-2 py-2">${txn.type}</td>
+                <td class="px-2 py-2">${txn.shares}</td>
+                <td class="px-2 py-2">${txn.amount.toLocaleString()}</td>
+                <td class="px-2 py-2">${txn.date}</td>
+                <td class="px-2 py-2">
+                    <span class="px-2 py-1 rounded-full text-white text-xs ${txn.status === 'completed' ? 'bg-green-500' : 'bg-yellow-500'}">
+                        ${txn.status}
+                    </span>
+                </td>
+            `;
+            tbody.appendChild(tr);
+        });
+    });
+</script> *@

@@ -1,0 +1,75 @@
+﻿@model SaccoShareManagementSys.Models.Shareholder
+@{
+    ViewData["Title"] = "Delete Shareholder";
+}
+
+<div class="container">
+    <div class="row justify-content-center">
+        <div class="col-lg-6">
+            <div class="card border-0 shadow-lg">
+                <div class="card-header bg-danger text-white py-3">
+                    <h5 class="mb-0">
+                        <i class="bi bi-exclamation-triangle me-2"></i>Delete Shareholder
+                    </h5>
+                </div>
+                <div class="card-body p-4">
+                    <div class="alert alert-warning">
+                        <i class="bi bi-exclamation-circle me-2"></i>
+                        <strong>Warning!</strong> Are you sure you want to delete this shareholder?
+                    </div>
+
+                    <div class="bg-light p-3 rounded mb-4">
+                        <h6 class="mb-3">Shareholder Information:</h6>
+                        <dl class="row mb-0">
+                            <dt class="col-sm-5">ID:</dt>
+                            <dd class="col-sm-7">#@Model.ShareholderId.ToString("D4")</dd>
+
+                            <dt class="col-sm-5">Name:</dt>
+                            <dd class="col-sm-7">@Model.FullName</dd>
+
+                            <dt class="col-sm-5">Email:</dt>
+                            <dd class="col-sm-7">@Model.Email</dd>
+
+                            <dt class="col-sm-5">Phone:</dt>
+                            <dd class="col-sm-7">@Model.Phone</dd>
+
+                            <dt class="col-sm-5">Total Shares:</dt>
+                            <dd class="col-sm-7">@Model.TotalShares.ToString("N0")</dd>
+
+                            <dt class="col-sm-5">Current Balance:</dt>
+                            <dd class="col-sm-7">ETB @Model.CurrentBalance.ToString("N2")</dd>
+
+                            <dt class="col-sm-5">Status:</dt>
+                            <dd class="col-sm-7">
+                                <span class="badge bg-@(Model.Status == "Active" ? "success" : "secondary")">
+                                    @Model.Status
+                                </span>
+                            </dd>
+                        </dl>
+                    </div>
+
+                    @if (Model.CurrentBalance > 0)
+                    {
+                        <div class="alert alert-danger">
+                            <i class="bi bi-x-circle me-2"></i>
+                            <strong>Cannot Delete!</strong> This shareholder has an outstanding balance of KES @Model.CurrentBalance.ToString("N2").
+                        </div>
+                    }
+
+                    <form asp-action="Delete" method="post">
+                        <input type="hidden" asp-for="ShareholderId" />
+                        <div class="d-grid gap-2">
+                            <button type="submit" class="btn btn-danger btn-lg"
+                                    @(Model.CurrentBalance > 0 ? "disabled" : "")>
+                                <i class="bi bi-trash me-2"></i>Yes, Delete Shareholder
+                            </button>
+                            <a asp-action="Details" asp-route-id="@Model.ShareholderId" class="btn btn-outline-secondary btn-lg">
+                                <i class="bi bi-x-circle me-2"></i>Cancel
+                            </a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

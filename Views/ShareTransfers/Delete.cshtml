@@ -1,0 +1,148 @@
+﻿@model SaccoShareManagementSys.Models.ShareTransfer
+@{
+    ViewData["Title"] = "Delete Transfer";
+}
+
+<div class="container-fluid">
+    <!-- Page Header -->
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h2 class="mb-1 text-danger">
+                <i class="bi bi-exclamation-triangle me-2"></i>Delete Share Transfer
+            </h2>
+            <p class="text-muted">Are you sure you want to delete this transfer?</p>
+        </div>
+        <a asp-action="Index" class="btn btn-outline-secondary">
+            <i class="bi bi-arrow-left me-2"></i>Back to List
+        </a>
+    </div>
+
+    <div class="row">
+        <div class="col-lg-8 mx-auto">
+            <!-- Warning Alert -->
+            <div class="alert alert-danger border-danger" role="alert">
+                <h5 class="alert-heading">
+                    <i class="bi bi-exclamation-triangle-fill me-2"></i>Warning!
+                </h5>
+                <p class="mb-0">
+                    You are about to permanently delete this share transfer. This action cannot be undone.
+                    @if (Model.Status == "Completed")
+                    {
+                        <strong class="d-block mt-2">
+                            This transfer has been completed. Deleting it will reverse the share balances for both shareholders!
+                        </strong>
+                    }
+                </p>
+            </div>
+
+            <!-- Transfer Details Card -->
+            <div class="card border-danger shadow-sm">
+                <div class="card-header bg-danger text-white">
+                    <h5 class="mb-0">
+                        <i class="bi bi-arrow-left-right me-2"></i>Transfer to be Deleted
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <!-- Transfer Visualization -->
+                    <div class="row align-items-center mb-4">
+                        <div class="col-md-5">
+                            <div class="text-center p-3 bg-light rounded">
+                                <h6 class="text-muted mb-2">FROM</h6>
+                                <h5 class="mb-2">@Model.FromShareholder?.FullName</h5>
+                                <p class="text-muted small mb-0">ID: #@Model.FromShareholderId.ToString("D4")</p>
+                            </div>
+                        </div>
+                        <div class="col-md-2 text-center">
+                            <i class="bi bi-arrow-right display-4 text-danger"></i>
+                            <div class="badge bg-danger mt-2">KES @Model.ShareAmount.ToString("N2")</div>
+                        </div>
+                        <div class="col-md-5">
+                            <div class="text-center p-3 bg-light rounded">
+                                <h6 class="text-muted mb-2">TO</h6>
+                                <h5 class="mb-2">@Model.ToShareholder?.FullName</h5>
+                                <p class="text-muted small mb-0">ID: #@Model.ToShareholderId.ToString("D4")</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <hr>
+
+                    <!-- Transfer Details -->
+                    <div class="row">
+                        <div class="col-md-4 mb-3">
+                            <label class="text-muted small d-block mb-1">Transfer ID</label>
+                            <p class="mb-0"><strong>#@Model.TransferId.ToString("D4")</strong></p>
+                        </div>
+                        <div class="col-md-4 mb-3">
+                            <label class="text-muted small d-block mb-1">Share Amount</label>
+                            <p class="mb-0"><strong class="text-danger">KES @Model.ShareAmount.ToString("N2")</strong></p>
+                        </div>
+                        <div class="col-md-4 mb-3">
+                            <label class="text-muted small d-block mb-1">Status</label>
+                            @if (Model.Status == "Completed")
+                            {
+                                <span class="badge bg-success">Completed</span>
+                            }
+                            else if (Model.Status == "Pending")
+                            {
+                                <span class="badge bg-warning">Pending</span>
+                            }
+                            else
+                            {
+                                <span class="badge bg-danger">Cancelled</span>
+                            }
+                        </div>
+                    </div>
+
+                    <hr>
+
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label class="text-muted small d-block mb-1">Transfer Date</label>
+                            <p class="mb-0">
+                                <i class="bi bi-calendar3 me-2"></i>
+                                @Model.TransferDate.ToString("dd MMMM yyyy")
+                            </p>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label class="text-muted small d-block mb-1">Created At</label>
+                            <p class="mb-0">
+                                <i class="bi bi-clock me-2"></i>
+                                @Model.CreatedAt.ToString("dd MMM yyyy HH:mm")
+                            </p>
+                        </div>
+                    </div>
+
+                    @if (!string.IsNullOrWhiteSpace(Model.Notes))
+                    {
+                        <hr>
+                        <div>
+                            <label class="text-muted small d-block mb-2">Notes</label>
+                            <p class="mb-0">@Model.Notes</p>
+                        </div>
+                    }
+                </div>
+            </div>
+
+            <!-- Confirmation Form -->
+            <div class="card border-0 shadow-sm mt-4">
+                <div class="card-body">
+                    <form asp-action="Delete" method="post">
+                        <input type="hidden" asp-for="TransferId" />
+                        @Html.AntiForgeryToken()
+
+                        <div class="d-flex justify-content-between align-items-center">
+                            <a asp-action="Details" asp-route-id="@Model.TransferId" class="btn btn-outline-secondary">
+                                <i class="bi bi-x-circle me-2"></i>Cancel
+                            </a>
+                            <button type="submit" class="btn btn-danger"
+                                    onclick="return confirm('Are you absolutely sure you want to delete this transfer? This will reverse all balance changes!')">
+                                <i class="bi bi-trash me-2"></i>Yes, Delete Transfer
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

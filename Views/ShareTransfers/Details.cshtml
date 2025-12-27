@@ -1,0 +1,388 @@
+﻿@model SaccoShareManagementSys.Models.ShareTransfer
+@{
+    ViewData["Title"] = "Transfer Details";
+}
+
+<div class="container-fluid">
+    <!-- Page Header -->
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h2 class="mb-1">Share Transfer Details</h2>
+            <p class="text-muted">Transfer #@Model.TransferId.ToString("D4")</p>
+        </div>
+        <div class="btn-group">
+            <a asp-action="Edit" asp-route-id="@Model.TransferId" class="btn btn-warning">
+                <i class="bi bi-pencil me-2"></i>Edit
+            </a>
+            <a asp-action="Index" class="btn btn-outline-secondary">
+                <i class="bi bi-arrow-left me-2"></i>Back to List
+            </a>
+        </div>
+    </div>
+
+    <!-- Alert Messages -->
+    @if (TempData["SuccessMessage"] != null)
+    {
+        <div class="alert alert-success alert-dismissible fade show" role="alert">
+            <i class="bi bi-check-circle me-2"></i>@TempData["SuccessMessage"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+    }
+
+    <div class="row">
+        <!-- Main Details -->
+        <div class="col-lg-8">
+            <!-- Transfer Flow Visualization -->
+            <div class="card border-0 shadow-sm mb-4">
+                <div class="card-header bg-primary text-white">
+                    <h5 class="mb-0">
+                        <i class="bi bi-arrow-left-right me-2"></i>Transfer Flow
+                    </h5>
+                </div>
+                <div class="card-body p-4">
+                    <div class="row align-items-center">
+                        <!-- From Shareholder -->
+                        <div class="col-md-5">
+                            <div class="text-center p-4 bg-light rounded">
+                                <div class="bg-danger bg-opacity-10 rounded-circle d-inline-flex align-items-center justify-content-center mb-3"
+                                     style="width: 80px; height: 80px;">
+                                    <i class="bi bi-person-dash display-5 text-danger"></i>
+                                </div>
+                                <h6 class="text-muted mb-2">FROM</h6>
+                                <h5 class="mb-2">@Model.FromShareholder?.FullName</h5>
+                                <p class="text-muted small mb-0">ID: #@Model.FromShareholderId.ToString("D4")</p>
+                            </div>
+                        </div>
+
+                        <!-- Transfer Amount -->
+                        <div class="col-md-2 text-center">
+                            <div class="d-flex flex-column align-items-center">
+                                <i class="bi bi-arrow-right display-4 text-primary mb-2"></i>
+                                <div class="badge bg-primary fs-6">
+                                    ETB @Model.ShareAmount.ToString("N2")
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- To Shareholder -->
+                        <div class="col-md-5">
+                            <div class="text-center p-4 bg-light rounded">
+                                <div class="bg-success bg-opacity-10 rounded-circle d-inline-flex align-items-center justify-content-center mb-3"
+                                     style="width: 80px; height: 80px;">
+                                    <i class="bi bi-person-plus display-5 text-success"></i>
+                                </div>
+                                <h6 class="text-muted mb-2">TO</h6>
+                                <h5 class="mb-2">@Model.ToShareholder?.FullName</h5>
+                                <p class="text-muted small mb-0">ID: #@Model.ToShareholderId.ToString("D4")</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Transfer Details -->
+            <div class="card border-0 shadow-sm mb-4">
+                <div class="card-header bg-info text-white">
+                    <h5 class="mb-0">
+                        <i class="bi bi-file-text me-2"></i>Transfer Information
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label class="text-muted small d-block mb-1">Transfer ID</label>
+                            <h5 class="mb-0">#@Model.TransferId.ToString("D4")</h5>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label class="text-muted small d-block mb-1">Status</label>
+                            @if (Model.Status == "Completed")
+                            {
+                                <span class="badge bg-success fs-6">
+                                    <i class="bi bi-check-circle me-1"></i>Completed
+                                </span>
+                            }
+                            else if (Model.Status == "Pending")
+                            {
+                                <span class="badge bg-warning fs-6">Pending</span>
+                            }
+                            else
+                            {
+                                <span class="badge bg-danger fs-6">Cancelled</span>
+                            }
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label class="text-muted small d-block mb-1">Transfer Date</label>
+                            <p class="mb-0">
+                                <i class="bi bi-calendar3 me-2"></i>
+                                <strong>@Model.TransferDate.ToString("dddd, dd MMMM yyyy")</strong>
+                            </p>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label class="text-muted small d-block mb-1">Share Amount</label>
+                            <h4 class="mb-0 text-primary">ETB @Model.ShareAmount.ToString("N2")</h4>
+                        </div>
+                    </div>
+
+                    @if (!string.IsNullOrWhiteSpace(Model.Notes))
+                    {
+                        <hr>
+                        <div>
+                            <label class="text-muted small d-block mb-2">Notes</label>
+                            <p class="mb-0">@Model.Notes</p>
+                        </div>
+                    }
+                </div>
+            </div>
+
+            <!-- Timestamps -->
+            <div class="card border-0 shadow-sm">
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <label class="text-muted small d-block mb-1">Created At</label>
+                            <p class="mb-0">
+                                <i class="bi bi-clock me-2"></i>
+                                @Model.CreatedAt.ToString("dd MMM yyyy HH:mm")
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Sidebar -->
+        <div class="col-lg-4">
+            <!-- Actions -->
+            <div class="card border-0 shadow-sm mb-4">
+                <div class="card-header bg-white border-bottom">
+                    <h6 class="mb-0">
+                        <i class="bi bi-gear me-2"></i>Actions
+                    </h6>
+                </div>
+                <div class="card-body">
+                    <div class="d-grid gap-2">
+                        <a asp-action="Edit" asp-route-id="@Model.TransferId" class="btn btn-warning">
+                            <i class="bi bi-pencil me-2"></i>Edit Transfer
+                        </a>
+                        <a asp-action="Delete" asp-route-id="@Model.TransferId" class="btn btn-outline-danger">
+                            <i class="bi bi-trash me-2"></i>Delete Transfer
+                        </a>
+                        <hr>
+                        <a asp-controller="Shareholders" asp-action="Details" asp-route-id="@Model.FromShareholderId"
+                           class="btn btn-outline-primary">
+                            <i class="bi bi-person me-2"></i>View Sender
+                        </a>
+                        <a asp-controller="Shareholders" asp-action="Details" asp-route-id="@Model.ToShareholderId"
+                           class="btn btn-outline-success">
+                            <i class="bi bi-person me-2"></i>View Receiver
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Transfer Summary -->
+            <div class="card border-0 shadow-sm bg-light">
+                <div class="card-body">
+                    <h6 class="mb-3"><i class="bi bi-info-circle me-2"></i>Transfer Summary</h6>
+                    <div class="mb-3">
+                        <small class="text-muted d-block">From</small>
+                        <strong>@Model.FromShareholder?.FullName</strong>
+                    </div>
+                    <div class="mb-3">
+                        <small class="text-muted d-block">To</small>
+                        <strong>@Model.ToShareholder?.FullName</strong>
+                    </div>
+                    <div class="mb-3">
+                        <small class="text-muted d-block">Amount</small>
+                        <strong class="text-primary">ETB @Model.ShareAmount.ToString("N2")</strong>
+                    </div>
+                    <div class="mb-0">
+                        <small class="text-muted d-block">Status</small>
+                        <span class="badge bg-@(Model.Status == "Completed" ? "success" : Model.Status == "Pending" ? "warning" : "danger")">
+                            @Model.Status
+                        </span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        setTimeout(function() {
+            $('.alert').alert('close');
+        }, 5000);
+    </script>
+}
+
+
+@* @{
+    ViewData["Title"] = "Transfer Details";
+}
+
+<div class="container">
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <!-- Page Header -->
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <div>
+                    <h2 class="mb-1">Transfer Details</h2>
+                    <p class="text-muted">Transfer #@Model.TransferId.ToString("D4")</p>
+                </div>
+                <a asp-action="Index" class="btn btn-outline-secondary">
+                    <i class="bi bi-arrow-left me-2"></i>Back to List
+                </a>
+            </div>
+
+            <!-- Transfer Summary Card -->
+            <div class="card border-0 shadow-lg mb-4">
+                <div class="card-header bg-gradient-primary text-white py-3">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <h5 class="mb-0">
+                            <i class="bi bi-receipt me-2"></i>Transfer Summary
+                        </h5>
+                        @if (Model.Status == "Completed")
+                        {
+                            <span class="badge bg-success">
+                                <i class="bi bi-check-circle me-1"></i>@Model.Status
+                            </span>
+                        }
+                        else if (Model.Status == "Pending")
+                        {
+                            <span class="badge bg-warning">
+                                <i class="bi bi-clock me-1"></i>@Model.Status
+                            </span>
+                        }
+                        else
+                        {
+                            <span class="badge bg-danger">
+                                <i class="bi bi-x-circle me-1"></i>@Model.Status
+                            </span>
+                        }
+                    </div>
+                </div>
+                <div class="card-body p-4">
+                    <!-- Transfer Amount - Highlighted -->
+                    <div class="text-center py-4 mb-4 bg-light rounded">
+                        <p class="text-muted mb-2">Transfer Amount</p>
+                        <h1 class="display-4 text-primary mb-0">
+                            KES @Model.ShareAmount.ToString("N2")
+                        </h1>
+                    </div>
+
+                    <!-- Transfer Flow -->
+                    <div class="row align-items-center mb-4">
+                        <div class="col-md-5">
+                            <div class="card bg-danger bg-opacity-10 border-danger">
+                                <div class="card-body">
+                                    <h6 class="text-danger mb-3">
+                                        <i class="bi bi-person-dash me-2"></i>From (Sender)
+                                    </h6>
+                                    <h5 class="mb-2">@Model.FromShareholder?.FullName</h5>
+                                    <p class="text-muted mb-1">
+                                        <small>
+                                            <strong>ID:</strong> #@Model.FromShareholderId.ToString("D4")
+                                        </small>
+                                    </p>
+                                    <p class="text-muted mb-0">
+                                        <small>
+                                            <strong>Email:</strong> @Model.FromShareholder?.Email
+                                        </small>
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-md-2 text-center">
+                            <i class="bi bi-arrow-right-circle display-4 text-primary"></i>
+                        </div>
+
+                        <div class="col-md-5">
+                            <div class="card bg-success bg-opacity-10 border-success">
+                                <div class="card-body">
+                                    <h6 class="text-success mb-3">
+                                        <i class="bi bi-person-plus me-2"></i>To (Receiver)
+                                    </h6>
+                                    <h5 class="mb-2">@Model.ToShareholder?.FullName</h5>
+                                    <p class="text-muted mb-1">
+                                        <small>
+                                            <strong>ID:</strong> #@Model.ToShareholderId.ToString("D4")
+                                        </small>
+                                    </p>
+                                    <p class="text-muted mb-0">
+                                        <small>
+                                            <strong>Email:</strong> @Model.ToShareholder?.Email
+                                        </small>
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Transfer Details Grid -->
+                    <hr class="my-4">
+
+                    <div class="row g-3">
+                        <div class="col-md-6">
+                            <div class="p-3 bg-light rounded">
+                                <p class="text-muted mb-1">
+                                    <i class="bi bi-calendar3 me-2"></i>Transfer Date
+                                </p>
+                                <h6 class="mb-0">@Model.TransferDate.ToString("dd MMMM yyyy")</h6>
+                                <small class="text-muted">@Model.TransferDate.ToString("hh:mm:ss tt")</small>
+                            </div>
+                        </div>
+
+                        <div class="col-md-6">
+                            <div class="p-3 bg-light rounded">
+                                <p class="text-muted mb-1">
+                                    <i class="bi bi-clock-history me-2"></i>Created At
+                                </p>
+                                <h6 class="mb-0">@Model.CreatedAt.ToString("dd MMMM yyyy")</h6>
+                                <small class="text-muted">@Model.CreatedAt.ToString("hh:mm:ss tt")</small>
+                            </div>
+                        </div>
+
+                        <div class="col-12">
+                            <div class="p-3 bg-light rounded">
+                                <p class="text-muted mb-1">
+                                    <i class="bi bi-sticky me-2"></i>Transfer Notes
+                                </p>
+                                <p class="mb-0">@(Model.Notes ?? "No notes provided")</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Action Buttons -->
+            <div class="d-grid gap-2 d-md-flex justify-content-md-center mb-4">
+                <a asp-action="Create" class="btn btn-primary btn-lg">
+                    <i class="bi bi-plus-circle me-2"></i>New Transfer
+                </a>
+                <a asp-controller="Shareholders" asp-action="Details"
+                   asp-route-id="@Model.FromShareholderId" class="btn btn-outline-secondary btn-lg">
+                    <i class="bi bi-person me-2"></i>View Sender
+                </a>
+                <a asp-controller="Shareholders" asp-action="Details"
+                   asp-route-id="@Model.ToShareholderId" class="btn btn-outline-secondary btn-lg">
+                    <i class="bi bi-person me-2"></i>View Receiver
+                </a>
+            </div>
+
+            <!-- Information Alert -->
+            <div class="alert alert-info">
+                <i class="bi bi-info-circle me-2"></i>
+                <strong>Note:</strong> This transfer was processed as an atomic transaction.
+                Both shareholder balances were updated simultaneously along with transaction records.
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .bg-gradient-primary {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    }
+</style> *@

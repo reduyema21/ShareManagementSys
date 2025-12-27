@@ -1,0 +1,107 @@
+﻿@model SaccoShareManagementSys.ViewModels.TransactionViewModel
+@{
+    ViewData["Title"] = "Create Transaction";
+}
+
+<div class="container-fluid">
+    <h2 class="mb-3">Create New Transaction</h2>
+
+    <div class="card shadow-sm border-0">
+        <div class="card-body">
+
+            <form asp-controller="Transactions" asp-action="Create" method="post">
+                @Html.AntiForgeryToken()
+                <div class="row g-3">
+
+                    <!-- Select Shareholder -->
+                    <div class="col-md-6">
+                        <label class="form-label">Select Shareholder</label>
+                        <select asp-for="ShareholderId" class="form-select" asp-items="Model.Shareholders">
+                            <option value="">-- Choose Shareholder --</option>
+                        </select>
+                        <span asp-validation-for="ShareholderId" class="text-danger"></span>
+                    </div>
+
+                    <!-- Select Share Certificate (ShareId) -->
+                    <div class="col-md-6">
+                        <label class="form-label">Share Certificate</label>
+                        <select asp-for="ShareId" asp-items="Model.Shares" class="form-select">
+                            <option value="">-- Select Certificate --</option>
+                            @* This will be dynamically loaded later if needed *@
+                        </select>
+                        <span asp-validation-for="ShareId" class="text-danger"></span>
+                    </div>
+
+                    <!-- Transaction Type -->
+                    <div class="col-md-4">
+                        <label asp-for="TransactionType" class="form-label"></label>
+                        <select asp-for="TransactionType" class="form-select" asp-items="Model.TransactionTypes">
+                            <option value="">-- Select Type --</option>
+                        </select>
+                        <span asp-validation-for="TransactionType" class="text-danger"></span>
+                    </div>
+
+                    <!-- Amount -->
+                    <div class="col-md-4">
+                        <label asp-for="Amount" class="form-label"></label>
+                        <input asp-for="Amount" class="form-control" />
+                        <span asp-validation-for="Amount" class="text-danger"></span>
+                    </div>
+
+                    <!-- Date -->
+                    <div class="col-md-4">
+                        <label asp-for="TransactionDate" class="form-label"></label>
+                        <input asp-for="TransactionDate" type="datetime-local" class="form-control" />
+                        <span asp-validation-for="TransactionDate" class="text-danger"></span>
+                    </div>
+
+                    <!-- Payment Method -->
+                    <div class="col-md-6">
+                        <label asp-for="PaymentMethod" class="form-label"></label>
+                        <select asp-for="PaymentMethod" class="form-select" asp-items="Model.PaymentMethods">
+                            <option value="">-- Select Payment Method --</option>
+                        </select>
+                    </div>
+
+                    @* <!-- Reference Number -->
+                    <div class="col-md-6">
+                        <label asp-for="ReferenceNumber" class="form-label"></label>
+                        <input asp-for="ReferenceNumber" class="form-control" />
+                    </div> *@
+
+                    <!-- Status -->
+                    <div class="col-md-6">
+                        <label asp-for="Status" class="form-label"></label>
+                        <select asp-for="Status" class="form-select" asp-items="Model.StatusList"></select>
+                    </div>
+
+                    <!-- Description -->
+                    <div class="col-md-12">
+                        <label asp-for="Description" class="form-label"></label>
+                        <textarea asp-for="Description" class="form-control"></textarea>
+                    </div>
+
+                    <!-- Notes -->
+                    <div class="col-md-12">
+                        <label asp-for="Notes" class="form-label"></label>
+                        <textarea asp-for="Notes" class="form-control"></textarea>
+                    </div>
+
+                </div>
+
+                <div class="mt-4">
+                    <button type="submit" class="btn btn-primary">
+                        <i class="bi bi-check-circle me-2"></i>Save Transaction
+                    </button>
+                    <a asp-action="Index" class="btn btn-secondary ms-2">Cancel</a>
+                </div>
+
+            </form>
+
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

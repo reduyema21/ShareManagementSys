@@ -1,0 +1,244 @@
+﻿@model SaccoShareManagementSys.ViewModels.ShareTransferViewModel
+
+@{
+    ViewData["Title"] = "New Share Transfer";
+}
+
+<div class="container">
+    <div class="row justify-content-center">
+        <div class="col-lg-10">
+
+            <div class="mb-4">
+                <h2 class="mb-1">
+                    <i class="bi bi-arrow-left-right me-2 text-primary"></i>New Share Transfer
+                </h2>
+                <p class="text-muted">Transfer shares between active shareholders</p>
+            </div>
+
+            <div class="row">
+
+                <!-- Transfer Form -->
+                <div class="col-lg-8 mb-4">
+                    <div class="card border-0 shadow-sm">
+                        <div class="card-header bg-primary text-white py-3">
+                            <h5 class="mb-0">
+                                <i class="bi bi-pencil-square me-2"></i>Transfer Details
+                            </h5>
+                        </div>
+
+                        <div class="card-body p-4">
+
+                            <form asp-action="Create" method="post" id="transferForm">
+                                <div asp-validation-summary="ModelOnly" class="alert alert-danger"></div>
+
+                                <!-- FROM SHAREHOLDER -->
+                                <div class="mb-4">
+                                    <label asp-for="FromShareholderId" class="form-label fw-semibold">
+                                        <i class="bi bi-person-dash text-danger me-2"></i>Sender
+                                    </label>
+
+                                    <select asp-for="FromShareholderId" class="form-select form-select-lg"
+                                            asp-items="Model.Shareholders" id="fromShareholder">
+                                        <option value="">-- Select Sender --</option>
+                                    </select>
+
+                                    <span asp-validation-for="FromShareholderId" class="text-danger"></span>
+
+                                    <div id="fromInfo" class="alert alert-info mt-2 d-none">
+                                        <small>
+                                            <strong>Available Balance:</strong>
+                                            <span id="fromBalance">ETB 0.00</span>
+                                        </small>
+                                    </div>
+                                </div>
+
+                                <!-- Arrow Divider -->
+                                <div class="text-center my-4">
+                                    <div class="bg-light rounded-circle d-inline-flex p-3">
+                                        <i class="bi bi-arrow-down-circle fs-3 text-primary"></i>
+                                    </div>
+                                </div>
+
+                                <!-- TO SHAREHOLDER -->
+                                <div class="mb-4">
+                                    <label asp-for="ToShareholderId" class="form-label fw-semibold">
+                                        <i class="bi bi-person-plus text-success me-2"></i>Receiver
+                                    </label>
+
+                                    <select asp-for="ToShareholderId" class="form-select form-select-lg"
+                                            asp-items="Model.Shareholders" id="toShareholder">
+                                        <option value="">-- Select Receiver --</option>
+                                    </select>
+
+                                    <span asp-validation-for="ToShareholderId" class="text-danger"></span>
+
+                                    <div id="toInfo" class="alert alert-success mt-2 d-none">
+                                        <small>
+                                            <strong>Current Balance:</strong>
+                                            <span id="toBalance">ETB  0.00</span>
+                                        </small>
+                                    </div>
+                                </div>
+
+                                <!-- SHARE AMOUNT -->
+                                <div class="mb-4">
+                                    <label asp-for="ShareAmount" class="form-label fw-semibold">
+                                        <i class="bi bi-cash-coin text-warning me-2"></i>Share Amount
+                                    </label>
+
+                                    <div class="input-group input-group-lg">
+                                        <span class="input-group-text">ETB</span>
+                                        <input asp-for="ShareAmount" class="form-control" id="shareAmount"
+                                               type="number" step="0.01" min="0.01" placeholder="0.00" />
+                                    </div>
+
+                                    <span asp-validation-for="ShareAmount" class="text-danger"></span>
+
+                                    <div id="transferPreview" class="alert alert-warning mt-3 d-none">
+                                        <small><strong>After Transfer:</strong></small><br>
+                                        <small id="afterFromBalance"></small><br>
+                                        <small id="afterToBalance"></small>
+                                    </div>
+                                </div>
+
+                                <!-- Notes -->
+                                <div class="mb-4">
+                                    <label asp-for="Notes" class="form-label fw-semibold">
+                                        <i class="bi bi-sticky text-info me-2"></i>Notes
+                                    </label>
+                                    <textarea asp-for="Notes" class="form-control" rows="3"
+                                              placeholder="Optional notes..."></textarea>
+                                    <span asp-validation-for="Notes" class="text-danger"></span>
+                                </div>
+
+                                <!-- Form Actions -->
+                                <div class="d-flex justify-content-end">
+                                    <a asp-action="Index" class="btn btn-outline-secondary btn-lg me-2">
+                                        <i class="bi bi-x-circle me-2"></i>Cancel
+                                    </a>
+
+                                    <button type="submit" class="btn btn-primary btn-lg" id="submitBtn">
+                                        <i class="bi bi-check-circle me-2"></i>Create Transfer
+                                    </button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Right Info Card -->
+                <div class="col-lg-4">
+                    <div class="card border-0 shadow-sm bg-light">
+                        <div class="card-body">
+                            <h5><i class="bi bi-info-circle me-2 text-primary"></i> Transfer Process</h5>
+                            <ul class="small text-muted mt-3">
+                                <li>Sender must have enough shares</li>
+                                <li>Transfer is atomic (all-or-nothing)</li>
+                                <li>Balances update instantly</li>
+                                <li>Both sender and receiver receive transaction logs</li>
+                                <li>Sender and receiver cannot be the same</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @{ await Html.RenderPartialAsync("_ValidationScriptsPartial"); }
+
+    <script>
+        let fromBalanceValue = 0;
+        let toBalanceValue = 0;
+
+        // Extract balance when options have format: "001 - Rediet Tsega (ETB 10,500.00)"
+        function extractBalance(selectEl) {
+            const text = selectEl.options[selectEl.selectedIndex].text;
+            const match = text.match(/ETB\s*([\d,]+\.\d{2})/);
+            return match ? parseFloat(match[1].replace(/,/g, "")) : 0;
+        }
+
+        // Sender change event
+        $('#fromShareholder').change(function () {
+            const val = $(this).val();
+            if (!val) {
+                $('#fromInfo').addClass('d-none');
+                $('#transferPreview').addClass('d-none');
+                return;
+            }
+
+            fromBalanceValue = extractBalance(this);
+            $('#fromBalance').text("ETB " + fromBalanceValue.toLocaleString());
+            $('#fromInfo').removeClass('d-none');
+            updatePreview();
+        });
+
+        // Receiver change event
+        $('#toShareholder').change(function () {
+            const val = $(this).val();
+            if (!val) {
+                $('#toInfo').addClass('d-none');
+                $('#transferPreview').addClass('d-none');
+                return;
+            }
+
+            toBalanceValue = extractBalance(this);
+            $('#toBalance').text("ETB " + toBalanceValue.toLocaleString());
+            $('#toInfo').removeClass('d-none');
+            updatePreview();
+        });
+
+        // Amount input
+        $('#shareAmount').on('input', updatePreview);
+
+        function updatePreview() {
+            const amount = parseFloat($('#shareAmount').val()) || 0;
+
+            if (!amount || !$('#fromShareholder').val() || !$('#toShareholder').val()) {
+                $('#transferPreview').addClass('d-none');
+                return;
+            }
+
+            const newFrom = fromBalanceValue - amount;
+            const newTo = toBalanceValue + amount;
+
+            $('#afterFromBalance').html(
+                `Sender → <strong>ETB ${newFrom.toLocaleString()}</strong>`
+            );
+
+            $('#afterToBalance').html(
+                `Receiver → <strong>ETB ${newTo.toLocaleString()}</strong>`
+            );
+
+            $('#transferPreview').removeClass('d-none');
+        }
+
+        // FINAL FORM VALIDATION
+        $('#transferForm').submit(function (e) {
+
+            const from = $('#fromShareholder').val();
+            const to = $('#toShareholder').val();
+            const amount = parseFloat($('#shareAmount').val());
+
+            if (from === to) {
+                e.preventDefault();
+                alert("Sender and receiver cannot be the same!");
+                return false;
+            }
+
+            if (amount > fromBalanceValue) {
+                e.preventDefault();
+                alert("Insufficient balance!");
+                return false;
+            }
+
+            $('#submitBtn').prop('disabled', true)
+                .html(`<span class="spinner-border spinner-border-sm me-2"></span>Processing...`);
+        });
+
+    </script>
+}

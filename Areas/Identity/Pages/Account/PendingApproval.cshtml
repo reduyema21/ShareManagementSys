@@ -1,0 +1,13 @@
+﻿@page
+@model SaccoShareManagementSys.Areas.Identity.Pages.Account.PendingApprovalModel
+@{
+    ViewData["Title"] = "Pending Approval";
+}
+
+<h3>Account Pending Approval</h3>
+<p>Your account has been registered but is pending admin approval. Please wait until an admin approves your account.</p>
+
+<p>
+    <button class="btn btn-primary" onclick="location.reload()">Check again</button>
+    <a asp-area="Identity" asp-page="/Account/Login" class="btn btn-link">Back to Login</a>
+</p>

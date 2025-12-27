@@ -1,0 +1,23 @@
+﻿# Visual Studio / .NET
+.vs/
+bin/
+obj/
+*.user
+*.suo
+*.userosscache
+*.sln.docstates
+
+# publish output
+publish/
+*.zip
+
+# Rider / IntelliJ
+.idea/
+
+# Local settings and secrets
+appsettings.Development.json
+secrets.json
+
+# Logs and DB files
+*.log
+*.db

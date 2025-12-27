@@ -1,0 +1,108 @@
+﻿@model SaccoShareManagementSys.ViewModels.ShareViewModel
+
+@{
+    ViewData["Title"] = "Issue Share Certificate";
+}
+
+<div class="container-fluid">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h2 class="mb-1">Issue Share Certificate</h2>
+            <p class="text-muted">Fill the form below to create a new share certificate</p>
+        </div>
+        <a asp-action="Index" class="btn btn-secondary">
+            <i class="bi bi-arrow-left-circle me-2"></i>Back to List
+        </a>
+    </div>
+
+    <div class="card border-0 shadow-sm">
+        <div class="card-body">
+            <form asp-action="Create" method="post">
+                <div asp-validation-summary="All" class="text-danger mb-3"></div>
+
+                <div class="row g-3">
+                    <!-- Shareholder -->
+                    <div class="col-md-6">
+                        <label asp-for="ShareholderId" class="form-label"></label>
+                        <select asp-for="ShareholderId" class="form-select" asp-items="Model.Shareholders">
+                            <option value="">-- Select Shareholder --</option>
+                        </select>
+                        <span asp-validation-for="ShareholderId" class="text-danger"></span>
+                    </div>
+
+                    <!-- Certificate Number -->
+                    <div class="col-md-6">
+                        <label asp-for="CertificateNumber" class="form-label"></label>
+                        <input asp-for="CertificateNumber" class="form-control" placeholder="Enter certificate number" />
+                        <span asp-validation-for="CertificateNumber" class="text-danger"></span>
+                    </div>
+
+                    <!-- Share Type -->
+                    <div class="col-md-6">
+                        <label asp-for="ShareType" class="form-label"></label>
+                        <select asp-for="ShareType" class="form-select" asp-items="Model.ShareTypes">
+                            <option value="">-- Select Share Type --</option>
+                        </select>
+                        <span asp-validation-for="ShareType" class="text-danger"></span>
+                    </div>
+
+                    <!-- Status -->
+                    <div class="col-md-6">
+                        <label asp-for="Status" class="form-label"></label>
+                        <select asp-for="Status" class="form-select" asp-items="Model.StatusList">
+                            <option value="">-- Select Status --</option>
+                        </select>
+                        <span asp-validation-for="Status" class="text-danger"></span>
+                    </div>
+
+                    <!-- Number of Shares -->
+                    <div class="col-md-6">
+                        <label asp-for="NumberOfShares" class="form-label"></label>
+                        <input asp-for="NumberOfShares" class="form-control" placeholder="Enter number of shares" />
+                        <span asp-validation-for="NumberOfShares" class="text-danger"></span>
+                    </div>
+
+                    <!-- Share Value -->
+                    <div class="col-md-6">
+                        <label asp-for="ShareValue" class="form-label"></label>
+                        <input asp-for="ShareValue" class="form-control" placeholder="Enter share value (KES)" />
+                        <span asp-validation-for="ShareValue" class="text-danger"></span>
+                    </div>
+
+                    <!-- Purchase Date -->
+                    <div class="col-md-6">
+                        <label asp-for="PurchaseDate" class="form-label"></label>
+                        <input asp-for="PurchaseDate" class="form-control" type="date" />
+                        <span asp-validation-for="PurchaseDate" class="text-danger"></span>
+                    </div>
+
+                    <!-- Maturity Date -->
+                    <div class="col-md-6">
+                        <label asp-for="MaturityDate" class="form-label"></label>
+                        <input asp-for="MaturityDate" class="form-control" type="date" />
+                        <span asp-validation-for="MaturityDate" class="text-danger"></span>
+                    </div>
+
+                    <!-- Notes -->
+                    <div class="col-12">
+                        <label asp-for="Notes" class="form-label"></label>
+                        <textarea asp-for="Notes" class="form-control" rows="3" placeholder="Optional notes"></textarea>
+                        <span asp-validation-for="Notes" class="text-danger"></span>
+                    </div>
+                </div>
+
+                <!-- Buttons -->
+                <div class="mt-4 d-flex justify-content-end">
+                    <button type="submit" class="btn btn-primary">
+                        <i class="bi bi-plus-circle me-2"></i>Issue Certificate
+                    </button>
+                    <a asp-action="Index" class="btn btn-secondary ms-2">Cancel</a>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

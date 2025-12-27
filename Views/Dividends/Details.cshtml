@@ -1,0 +1,290 @@
+﻿@model SaccoShareManagementSys.Models.Dividend
+@{
+    ViewData["Title"] = "Dividend Details";
+    var monthName = new DateTime(Model.Year, Model.Month, 1).ToString("MMMM");
+    var dividendPerShare = Model.TotalShares > 0 ? Model.TotalDividendPaid / Model.TotalShares : 0;
+}
+
+<div class="container-fluid">
+    <!-- Page Header -->
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h2 class="mb-1">Dividend Details</h2>
+            <p class="text-muted">@monthName @Model.Year Distribution</p>
+        </div>
+        <div class="btn-group">
+            @if (Model.Status != "Distributed")
+            {
+                <form asp-action="Distribute" asp-route-id="@Model.DividendId" method="post" style="display: inline;">
+                    @Html.AntiForgeryToken()
+                    <button type="submit" class="btn btn-success" onclick="return confirm('Are you sure you want to distribute this dividend to all shareholders?')">
+                        <i class="bi bi-cash-coin me-2"></i>Distribute Dividend
+                    </button>
+                </form>
+            }
+            <a asp-action="Edit" asp-route-id="@Model.DividendId" class="btn btn-warning">
+                <i class="bi bi-pencil me-2"></i>Edit
+            </a>
+            <a asp-action="Index" class="btn btn-outline-secondary">
+                <i class="bi bi-arrow-left me-2"></i>Back to List
+            </a>
+        </div>
+    </div>
+
+    <!-- Alert Messages -->
+    @if (TempData["SuccessMessage"] != null)
+    {
+        <div class="alert alert-success alert-dismissible fade show" role="alert">
+            <i class="bi bi-check-circle me-2"></i>@TempData["SuccessMessage"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+    }
+    @if (TempData["ErrorMessage"] != null)
+    {
+        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+            <i class="bi bi-exclamation-triangle me-2"></i>@TempData["ErrorMessage"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+    }
+
+    <div class="row">
+        <!-- Main Details -->
+        <div class="col-lg-8">
+            <!-- Period Information -->
+            <div class="card border-0 shadow-sm mb-4">
+                <div class="card-header bg-primary text-white">
+                    <h5 class="mb-0">
+                        <i class="bi bi-calendar3 me-2"></i>Dividend Period
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-4 mb-3">
+                            <label class="text-muted small d-block mb-1">Year</label>
+                            <h4 class="mb-0">@Model.Year</h4>
+                        </div>
+                        <div class="col-md-4 mb-3">
+                            <label class="text-muted small d-block mb-1">Month</label>
+                            <h4 class="mb-0">@monthName</h4>
+                        </div>
+                        <div class="col-md-4 mb-3">
+                            <label class="text-muted small d-block mb-1">Status</label>
+                            @if (Model.Status == "Distributed")
+                            {
+                                <span class="badge bg-success fs-6">
+                                    <i class="bi bi-check-circle me-1"></i>Distributed
+                                </span>
+                            }
+                            else if (Model.Status == "Approved")
+                            {
+                                <span class="badge bg-info fs-6">Approved</span>
+                            }
+                            else if (Model.Status == "Pending")
+                            {
+                                <span class="badge bg-warning fs-6">Pending</span>
+                            }
+                            else
+                            {
+                                <span class="badge bg-secondary fs-6">Cancelled</span>
+                            }
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Financial Details -->
+            <div class="card border-0 shadow-sm mb-4">
+                <div class="card-header bg-success text-white">
+                    <h5 class="mb-0">
+                        <i class="bi bi-cash-stack me-2"></i>Financial Information
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <div class="d-flex justify-content-between align-items-center mb-2">
+                                <label class="text-muted small mb-0">Total Profit</label>
+                                <i class="bi bi-currency-exchange text-success"></i>
+                            </div>
+                            <h3 class="mb-0 text-success">ETB @Model.TotalProfit.ToString("N2")</h3>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <div class="d-flex justify-content-between align-items-center mb-2">
+                                <label class="text-muted small mb-0">Total Shares</label>
+                                <i class="bi bi-pie-chart text-info"></i>
+                            </div>
+                            <h3 class="mb-0 text-info">@Model.TotalShares.ToString("N2")</h3>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <div class="d-flex justify-content-between align-items-center mb-2">
+                                <label class="text-muted small mb-0">Dividend Rate</label>
+                                <i class="bi bi-percent text-primary"></i>
+                            </div>
+                            <h3 class="mb-0 text-primary">@Model.DividendRate.ToString("F2")%</h3>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <div class="d-flex justify-content-between align-items-center mb-2">
+                                <label class="text-muted small mb-0">Total Dividend Paid</label>
+                                <i class="bi bi-cash-coin text-warning"></i>
+                            </div>
+                            <h3 class="mb-0 text-warning">ETB @Model.TotalDividendPaid.ToString("N2")</h3>
+                        </div>
+                    </div>
+
+                    <div class="alert alert-info mt-3 mb-0">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <div>
+                                <strong>Dividend Per Share:</strong>
+                                <span class="ms-2">ETB @dividendPerShare.ToString("N4")</span>
+                            </div>
+                            <i class="bi bi-info-circle"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Distribution Details -->
+            <div class="card border-0 shadow-sm mb-4">
+                <div class="card-header bg-info text-white">
+                    <h5 class="mb-0">
+                        <i class="bi bi-calendar-check me-2"></i>Distribution Information
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label class="text-muted small d-block mb-1">Distribution Date</label>
+                            <p class="mb-0">
+                                <i class="bi bi-calendar3 me-2"></i>
+                                <strong>@Model.DistributionDate.ToString("dddd, dd MMMM yyyy")</strong>
+                            </p>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label class="text-muted small d-block mb-1">Created At</label>
+                            <p class="mb-0">
+                                <i class="bi bi-clock me-2"></i>
+                                @Model.CreatedAt.ToString("dd MMM yyyy HH:mm")
+                            </p>
+                        </div>
+                        @if (Model.UpdatedAt.HasValue)
+                        {
+                            <div class="col-md-6 mb-3">
+                                <label class="text-muted small d-block mb-1">Last Updated</label>
+                                <p class="mb-0">
+                                    <i class="bi bi-clock-history me-2"></i>
+                                    @Model.UpdatedAt.Value.ToString("dd MMM yyyy HH:mm")
+                                </p>
+                            </div>
+                        }
+                    </div>
+
+                    @if (!string.IsNullOrWhiteSpace(Model.Notes))
+                    {
+                        <hr>
+                        <div>
+                            <label class="text-muted small d-block mb-2">Notes</label>
+                            <p class="mb-0">@Model.Notes</p>
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+
+        <!-- Sidebar -->
+        <div class="col-lg-4">
+            <!-- Quick Stats -->
+            <div class="card border-0 shadow-sm mb-4">
+                <div class="card-header bg-white border-bottom">
+                    <h6 class="mb-0">
+                        <i class="bi bi-graph-up me-2"></i>Quick Statistics
+                    </h6>
+                </div>
+                <div class="card-body">
+                    <div class="mb-3">
+                        <div class="d-flex justify-content-between align-items-center mb-2">
+                            <span class="text-muted small">Profit Distributed</span>
+                            <i class="bi bi-arrow-down-circle text-success"></i>
+                        </div>
+                        <div class="progress" style="height: 25px;">
+                            <div class="progress-bar bg-success" role="progressbar"
+                                 style="width: @Model.DividendRate%">
+                                @Model.DividendRate.ToString("F1")%
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="mb-3">
+                        <div class="d-flex justify-content-between mb-1">
+                            <span class="small">Total Profit:</span>
+                            <strong>ETB @((Model.TotalProfit / 1000).ToString("N1"))K</strong>
+                        </div>
+                        <div class="d-flex justify-content-between mb-1">
+                            <span class="small">Distributed:</span>
+                            <strong class="text-success">ETB @((Model.TotalDividendPaid / 1000).ToString("N1"))K</strong>
+                        </div>
+                        <div class="d-flex justify-content-between">
+                            <span class="small">Retained:</span>
+                            <strong class="text-info">ETB @(((Model.TotalProfit - Model.TotalDividendPaid) / 1000).ToString("N1"))K</strong>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Actions -->
+            <div class="card border-0 shadow-sm mb-4">
+                <div class="card-header bg-white border-bottom">
+                    <h6 class="mb-0">
+                        <i class="bi bi-gear me-2"></i>Actions
+                    </h6>
+                </div>
+                <div class="card-body">
+                    <div class="d-grid gap-2">
+                        @if (Model.Status != "Distributed")
+                        {
+                            <form asp-action="Distribute" asp-route-id="@Model.DividendId" method="post">
+                                @Html.AntiForgeryToken()
+                                <button type="submit" class="btn btn-success w-100"
+                                        onclick="return confirm('Are you sure you want to distribute this dividend to all active shareholders?')">
+                                    <i class="bi bi-cash-coin me-2"></i>Distribute Now
+                                </button>
+                            </form>
+                        }
+                        <a asp-action="Edit" asp-route-id="@Model.DividendId" class="btn btn-warning">
+                            <i class="bi bi-pencil me-2"></i>Edit Details
+                        </a>
+                        <a asp-action="Delete" asp-route-id="@Model.DividendId" class="btn btn-outline-danger">
+                            <i class="bi bi-trash me-2"></i>Delete Dividend
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Information -->
+            <div class="card border-0 shadow-sm bg-light">
+                <div class="card-body">
+                    <h6 class="mb-3"><i class="bi bi-info-circle me-2"></i>Information</h6>
+                    <p class="small mb-2">
+                        <strong>Dividend ID:</strong> #@Model.DividendId.ToString("D4")
+                    </p>
+                    <p class="small mb-2">
+                        <strong>Period:</strong> @monthName @Model.Year
+                    </p>
+                    <p class="small mb-0">
+                        <strong>Current Status:</strong>
+                        <span class="badge bg-@(Model.Status == "Distributed" ? "success" : Model.Status == "Approved" ? "info" : Model.Status == "Pending" ? "warning" : "secondary")">
+                            @Model.Status
+                        </span>
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        setTimeout(function() {
+            $('.alert').alert('close');
+        }, 5000);
+    </script>
+}

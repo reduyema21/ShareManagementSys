@@ -1,0 +1,302 @@
+﻿@using System.Text.Json
+@model SaccoShareManagementSys.ViewModels.DividendIndexViewModel
+
+@{
+    ViewData["Title"] = "Dividends Dashboard";
+
+    Func<decimal, string> formatCurrency = v => string.Format(System.Globalization.CultureInfo.InvariantCulture, "ETB {0:N0}", v);
+    Func<decimal, string> formatCurrencyK = v =>
+    {
+        if (Math.Abs(v) >= 1000m) return $"ETB {v / 1000m:N0}K";
+        return $"ETB {v:N0}";
+    };
+}
+
+<div class="container-fluid">
+
+    <!-- Top Stats -->
+    <div class="row g-3 mb-4">
+        <div class="col-md-3">
+            <div class="card p-3 shadow-sm">
+                <small class="text-muted">Total Dividends Paid</small>
+                <div class="d-flex justify-content-between align-items-center">
+                    <h4 class="mb-0">@formatCurrencyK(Model.Statistics?.TotalDividendsPaid ?? 0m)</h4>
+                    <div class="text-success fs-4">💲</div>
+                </div>
+                <small class="text-muted">Year to date</small>
+            </div>
+        </div>
+
+        <div class="col-md-3">
+            <div class="card p-3 shadow-sm">
+                <small class="text-muted">Avg Monthly Dividend</small>
+                <div class="d-flex justify-content-between align-items-center">
+                    <h4 class="mb-0">
+                        @{
+                            var months = Math.Max(1, (Model.DividendTrendData?.Count ?? 1));
+                            var avg = months > 0 ? ((Model.Statistics?.TotalDividendsPaid ?? 0m) / months) : 0m;
+                        }
+                        @formatCurrency(avg)
+                    </h4>
+                    <div class="text-primary fs-4">📈</div>
+                </div>
+                <small class="text-muted">Per month</small>
+            </div>
+        </div>
+
+        <div class="col-md-3">
+            <div class="card p-3 shadow-sm">
+                <small class="text-muted">Current Share Balance</small>
+                <div class="d-flex justify-content-between align-items-center">
+                    <h4 class="mb-0">
+                        @($"{(Model.Dividends?.FirstOrDefault()?.TotalShares ?? 0m) / 1000m:N2}K")
+                    </h4>
+                    <div class="text-info fs-4">📊</div>
+                </div>
+                <small class="text-muted">Total portfolio</small>
+            </div>
+        </div>
+
+        <div class="col-md-3">
+            <div class="card p-3 shadow-sm">
+                <small class="text-muted">Average Rate</small>
+                <div class="d-flex justify-content-between align-items-center">
+                    <h4 class="mb-0">@((Model.Statistics?.AverageDividendRate ?? 0m).ToString("P3"))</h4>
+                    <div class="text-warning fs-4">📅</div>
+                </div>
+                <small class="text-muted">@($"{(Model.Statistics?.AverageDividendRate ?? 0m) * 12:P2} annual")</small>
+            </div>
+        </div>
+    </div>
+
+    <!-- Charts Row -->
+    <div class="row g-3 mb-4">
+        <div class="col-lg-7">
+            <div class="card p-3 shadow-sm">
+                <div class="d-flex justify-content-between">
+                    <div>
+                        <h6 class="mb-0">Dividend Distribution Trend</h6>
+                        <small class="text-muted">Monthly dividend amounts and portfolio balance</small>
+                    </div>
+                    <small class="text-muted">Last @((Model.DividendTrendData?.Count) ?? 12) months</small>
+                </div>
+                <div class="mt-3">
+                    <canvas id="trendChart" style="height:240px;"></canvas>
+                </div>
+                <div class="mt-3 d-flex gap-3 align-items-center">
+                    <span class="badge bg-light text-primary border">Balance (K)</span>
+                    <span class="badge bg-light text-success border">Dividend (ETB)</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-lg-5">
+            <div class="card p-3 shadow-sm h-100 d-flex flex-column">
+                <div class="d-flex justify-content-between">
+                    <div>
+                        <h6 class="mb-0">Monthly Share Flow</h6>
+                        <small class="text-muted">Shares in vs shares out (in thousands)</small>
+                    </div>
+                    <button class="btn btn-sm btn-outline-secondary" id="exportChartBtn">Export</button>
+                </div>
+                <div class="mt-3" style="position:relative; height:260px; width:100%;">
+                    <canvas id="shareFlowChart"></canvas>
+                </div>
+
+                <div class="mt-3">
+                    <small class="text-muted">Blue = Shares In (K) • Red = Shares Out (K)</small>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Dividend History + Actions -->
+    <div class="card mb-3 shadow-sm">
+        <div class="card-body d-flex flex-column flex-md-row justify-content-between align-items-center gap-3">
+            <div>
+                <h5 class="mb-1">Dividend History</h5>
+                <small class="text-muted">Monthly dividend calculations and distributions</small>
+            </div>
+
+            <div class="d-flex gap-2 w-100 w-md-auto align-items-center">
+                <form method="get" class="d-flex gap-2 align-items-center" style="min-width:320px;">
+                    <div class="input-group">
+                        <span class="input-group-text"><i class="bi bi-search"></i></span>
+                        <input type="text" name="SearchTerm" value="@(Model.Filter?.SearchTerm ?? "")" class="form-control" placeholder="Search by month..." />
+                    </div>
+
+                    <select name="Status" class="form-select" style="width:150px;">
+                        @{
+                            var status = Model.Filter?.Status ?? "all";
+                        }
+                        <option value="all" selected="@(status == "all")">All Status</option>
+                        <option value="Pending" selected="@(status == "Pending")">Pending</option>
+                        <option value="Approved" selected="@(status == "Approved")">Approved</option>
+                        <option value="Distributed" selected="@(status == "Distributed")">Distributed</option>
+                        <option value="Cancelled" selected="@(status == "Cancelled")">Cancelled</option>
+                    </select>
+
+                    <button class="btn btn-outline-secondary" type="submit">Filter</button>
+                </form>
+
+                <a class="btn btn-primary ms-2" href="@Url.Action("Calculate")">
+                    <i class="bi bi-plus-lg"></i> Calculate New Dividend
+                </a>
+
+                <button class="btn btn-outline-secondary" id="exportBtn">Export</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Dividend Table -->
+    <div class="card shadow-sm">
+        <div class="card-body table-responsive p-0">
+            <table class="table table-hover mb-0">
+                <thead class="table-light">
+                    <tr>
+                        <th style="min-width:140px;">Month</th>
+                        <th class="text-end">Opening Balance</th>
+                        <th class="text-end">Shares In</th>
+                        <th class="text-end">Shares Out</th>
+                        <th class="text-end">Closing Balance</th>
+                        <th class="text-end">Rate (%)</th>
+                        <th class="text-end">Dividend Amount</th>
+                        <th style="min-width:110px;">Status</th>
+                        <th style="min-width:130px;">Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @if (Model.Dividends != null && Model.Dividends.Any())
+                    {
+                        foreach (var d in Model.Dividends)
+                        {
+                            var monthShort = new DateTime(d.Year, d.Month, 1).ToString("MMM yyyy");
+                            var shareFlow = Model.ShareFlowData?.FirstOrDefault(s => s.Month == monthShort);
+                            var sharesInVal = (shareFlow?.SharesIn ?? 0m) * 1000m;
+                            var sharesOutVal = (shareFlow?.SharesOut ?? 0m) * 1000m;
+                            var closingBalance = d.TotalShares;
+                            var openingBalance = Math.Max(0m, closingBalance - sharesInVal + sharesOutVal);
+
+                            <tr>
+                                <td>
+                                    <div><strong>@d.MonthName</strong></div>
+                                    <div class="text-muted small">@d.Year</div>
+                                </td>
+                                <td class="text-end">@formatCurrencyK(openingBalance)</td>
+                                <td class="text-end text-success">@((sharesInVal / 1000m).ToString("N0"))K</td>
+                                <td class="text-end text-danger">@((sharesOutVal / 1000m).ToString("N0"))K</td>
+                                <td class="text-end">@($"{(closingBalance/1000m):N2}K")</td>
+                                <td class="text-end">@d.DividendRate.ToString("P3")</td>
+                                <td class="text-end">
+                                    <div>@formatCurrencyK(d.TotalDividendPaid)</div>
+                                    <div class="text-muted small">@d.DividendPerShare.ToString("N2") per share</div>
+                                </td>
+                                <td>
+                                    <span class="badge @(d.Status == "Distributed" ? "bg-success" : d.Status == "Pending" ? "bg-warning text-dark" : d.Status == "Cancelled" ? "bg-danger" : "bg-info")">
+                                        @d.Status
+                                    </span>
+                                </td>
+                                <td>
+                                    <a class="btn btn-sm btn-link" href="@Url.Action("Details", new { id = d.DividendId })">View</a>
+                                    <a class="btn btn-sm btn-link" href="@Url.Action("Edit", new { id = d.DividendId })">Edit</a>
+                                    <a class="btn btn-sm btn-link text-danger" href="@Url.Action("Delete", new { id = d.DividendId })">Delete</a>
+                                </td>
+                            </tr>
+                        }
+                    }
+                    else
+                    {
+                        <tr>
+                            <td colspan="9" class="text-center text-muted py-4">No dividend records found.</td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+</div>
+
+@section Scripts {
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <script>
+        const trendLabels = @Html.Raw(
+                    JsonSerializer.Serialize(Model.DividendTrendData?.Select(x => x.Month) ?? Array.Empty<string>())
+            );
+
+    const trendValues = @Html.Raw(
+                JsonSerializer.Serialize(Model.DividendTrendData?.Select(x => x.DividendAmount) ?? Array.Empty<decimal>())
+        );
+
+    const trendCtx = document.getElementById('trendChart').getContext('2d');
+
+        new Chart(trendCtx, {
+            type: 'line',
+            data: {
+                labels: trendLabels,
+                datasets: [{
+                    label: 'Dividend Amount (ETB)',
+                    data: trendValues,
+                    borderWidth: 2,
+                    fill: false,
+                    tension: 0.3
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                scales: {
+                    y: {
+                        beginAtZero: true
+                    }
+                }
+            }
+        });
+    </script>
+
+    <script>
+        const shareFlowLabels = @Html.Raw(
+                JsonSerializer.Serialize(Model.ShareFlowData?.Select(x => x.Month) ?? Array.Empty<string>())
+        );
+
+    const sharesIn = @Html.Raw(
+                JsonSerializer.Serialize(Model.ShareFlowData?.Select(x => x.SharesIn) ?? Array.Empty<decimal>())
+        );
+
+    const sharesOut = @Html.Raw(
+                JsonSerializer.Serialize(Model.ShareFlowData?.Select(x => x.SharesOut) ?? Array.Empty<decimal>())
+        );
+
+    const shareFlowCtx = document.getElementById('shareFlowChart').getContext('2d');
+
+        new Chart(shareFlowCtx, {
+            type: 'bar',
+            data: {
+                labels: shareFlowLabels,
+                datasets: [
+                    {
+                        label: 'Shares In (K)',
+                        data: sharesIn
+                    },
+                    {
+                        label: 'Shares Out (K)',
+                        data: sharesOut
+                    }
+                ]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                scales: {
+                    y: {
+                        beginAtZero: true
+                    }
+                }
+            }
+        });
+    </script>
+
+
+}
+

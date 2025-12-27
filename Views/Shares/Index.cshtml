@@ -1,0 +1,275 @@
+﻿@model SaccoShareManagementSys.ViewModels.ShareIndexViewModel
+@{
+    ViewData["Title"] = "Share Certificates";
+}
+
+<div class="container-fluid">
+    <!-- Page Header -->
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h2 class="mb-1">Share Certificate Management</h2>
+            <p class="text-muted">Manage all share certificates</p>
+        </div>
+        <a asp-action="Create" class="btn btn-primary">
+            <i class="bi bi-plus-circle me-2"></i>Issue New Certificate
+        </a>
+    </div>
+
+    <!-- Alert Messages -->
+    @if (TempData["SuccessMessage"] != null)
+    {
+        <div class="alert alert-success alert-dismissible fade show" role="alert">
+            <i class="bi bi-check-circle me-2"></i>@TempData["SuccessMessage"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+    }
+    @if (TempData["ErrorMessage"] != null)
+    {
+        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+            <i class="bi bi-exclamation-triangle me-2"></i>@TempData["ErrorMessage"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+    }
+
+    <!-- Statistics Cards -->
+    <div class="row mb-4">
+
+        <!-- 1. Total Certificates -->
+        <div class="col-md-3 mb-3">
+            <div class="card border-0 shadow-sm h-100">
+                <div class="card-body d-flex justify-content-between align-items-start">
+                    <div>
+                        <h6 class="text-muted mb-1">Total Certificates</h6>
+                        <h3 class="mb-0">@Model.Statistics.TotalCertificates</h3>
+                        <small class="text-muted">All certificates</small>
+                    </div>
+                    <div class="rounded-circle bg-primary bg-opacity-10 d-flex align-items-center justify-content-center"
+                         style="width:36px; height:36px; flex-shrink:0;">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"
+                             style="width:16px; height:16px; display:block;"
+                             fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" class="text-blue-600">
+                            <path d="M16 7h6v6"></path>
+                            <path d="m22 7-8.5 8.5-5-5L2 17"></path>
+                        </svg>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 2. Active Certificates -->
+        <div class="col-md-3 mb-3">
+            <div class="card border-0 shadow-sm h-100">
+                <div class="card-body d-flex justify-content-between align-items-start">
+                    <div>
+                        <h6 class="text-muted mb-1">Active Certificates</h6>
+                        <h3 class="mb-0">@Model.Statistics.ActiveCertificates</h3>
+                        <small class="text-success">
+                            @(Model.Statistics.TotalCertificates > 0 ?
+                                                        ((decimal)Model.Statistics.ActiveCertificates / Model.Statistics.TotalCertificates * 100).ToString("F0") : "0")% active
+                        </small>
+                    </div>
+                    <div class="rounded-circle bg-primary bg-opacity-10 d-flex align-items-center justify-content-center"
+                         style="width:36px; height:36px; flex-shrink:0;">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"
+                             style="width:16px; height:16px; display:block;"
+                             fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" class="text-purple-600">
+                            <path d="M8 2v4"></path>
+                            <path d="M16 2v4"></path>
+                            <rect x="3" y="4" width="18" height="18" rx="2"></rect>
+                            <path d="M3 10h18"></path>
+                        </svg>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 3. Total Share Value -->
+        <div class="col-md-3 mb-3">
+            <div class="card border-0 shadow-sm h-100">
+                <div class="card-body d-flex justify-content-between align-items-start">
+                    <div>
+                        <h6 class="text-muted mb-1">Total Share Value</h6>
+                        <h3 class="mb-0">KES @((Model.Statistics.TotalShareValue / 1000).ToString("N1"))K</h3>
+                        <small class="text-muted">Combined value</small>
+                    </div>
+                    <div class="rounded-circle bg-primary bg-opacity-10 d-flex align-items-center justify-content-center"
+                         style="width:36px; height:36px; flex-shrink:0;">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"
+                             style="width:16px; height:16px; display:block;"
+                             fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" class="text-green-600">
+                            <path d="M16 7h6v6"></path>
+                            <path d="m22 7-8.5 8.5-5-5L2 17"></path>
+                        </svg>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 4. Average Value -->
+        <div class="col-md-3 mb-3">
+            <div class="card border-0 shadow-sm h-100">
+                <div class="card-body d-flex justify-content-between align-items-start">
+                    <div>
+                        <h6 class="text-muted mb-1">Average Value</h6>
+                        <h3 class="mb-0">ETB @Model.Statistics.AverageShareValue.ToString("N0")</h3>
+                        <small class="text-muted">Per certificate</small>
+                    </div>
+                    <div class="rounded-circle bg-primary bg-opacity-10 d-flex align-items-center justify-content-center"
+                         style="width:36px; height:36px; flex-shrink:0;">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"
+                             style="width:16px; height:16px; display:block;"
+                             fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" class="text-orange-600">
+                            <path d="M16 7h6v6"></path>
+                            <path d="m22 7-8.5 8.5-5-5L2 17"></path>
+                        </svg>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+
+    <!-- Shares Table -->
+    <div class="card border-0 shadow-sm">
+        <div class="card-header bg-white py-3">
+            <h5 class="mb-0">
+                <i class="bi bi-table me-2"></i>All Share Certificates
+            </h5>
+        </div>
+
+        <!-- Filters -->
+        <div class="card-body border-bottom">
+            <form asp-action="Index" method="get">
+                <div class="row g-3">
+                    <div class="col-md-4">
+                        <div class="input-group">
+                            <span class="input-group-text"><i class="bi bi-search"></i></span>
+                            <input type="text" class="form-control" name="SearchTerm"
+                                   value="@Model.Filter.SearchTerm"
+                                   placeholder="Search by certificate number or shareholder...">
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <select class="form-select" name="ShareType">
+                            <option value="all">All Types</option>
+                            <option value="Ordinary Shares" selected="@(Model.Filter.ShareType == "Ordinary Shares")">Ordinary Shares</option>
+                            <option value="Preference Shares" selected="@(Model.Filter.ShareType == "Preference Shares")">Preference Shares</option>
+                            <option value="Cumulative Shares" selected="@(Model.Filter.ShareType == "Cumulative Shares")">Cumulative Shares</option>
+                        </select>
+                    </div>
+                    <div class="col-md-3">
+                        <select class="form-select" name="Status">
+                            <option value="all">All Status</option>
+                            <option value="Active" selected="@(Model.Filter.Status == "Active")">Active</option>
+                            <option value="Matured" selected="@(Model.Filter.Status == "Matured")">Matured</option>
+                            <option value="Cancelled" selected="@(Model.Filter.Status == "Cancelled")">Cancelled</option>
+                        </select>
+                    </div>
+                    <div class="col-md-2">
+                        <button type="submit" class="btn btn-primary w-100">
+                            <i class="bi bi-funnel me-2"></i>Filter
+                        </button>
+                    </div>
+                </div>
+            </form>
+        </div>
+
+        <div class="card-body p-0">
+            @if (Model.Shares.Any())
+            {
+                <div class="table-responsive">
+                    <table class="table table-hover mb-0">
+                        <thead class="table-light">
+                            <tr>
+                                <th>Share Id</th>
+                                <th>Shareholder</th>
+                                <th>Share Type</th>
+                                <th class="text-end">Intial Amount</th>
+                                <th class="text-end">Current Balance</th>
+                                <th class="text-end">Growth</th>
+                                <th>Issue Date</th>
+                                <th class="text-center">Transactions</th>
+                                <th class="text-center">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var share in Model.Shares)
+                            {
+                                <tr>
+                                    <td>
+                                        <strong class="font-monospace">@share.CertificateNumber</strong>
+                                    </td>
+                                    <td>
+                                        <strong>@share.ShareholderName</strong>
+                                        <br><small class="text-muted">ID: #@share.ShareholderId.ToString("D4")</small>
+                                    </td>
+                                    <td>
+                                        <span class="badge bg-info">@share.ShareType</span>
+                                    </td>
+                                    <td class="text-end">
+                                        <strong>Birr @share.InitialAmount.ToString("N2")</strong>
+                                    </td>
+                                    <td class="text-end">
+                                        <strong>Birr @share.CurrentBalance.ToString("N2")</strong>
+                                    </td>
+                                    <td class="text-end">
+                                        <strong class="text-success"> @share.GrowthPercent.ToString("N2") %</strong>
+                                    </td>
+                                    <td>
+                                        <small>@share.PurchaseDate.ToString("dd MMM yyyy")</small>
+                                    </td>
+                                    <td class="text-end">
+                                        <strong class="text-success"> @share.TransactionCount</strong>
+                                    </td>
+                                    
+                                    <td class="text-center">
+                                        <div class="btn-group btn-group-sm">
+                                            <a asp-action="Details" asp-route-id="@share.ShareId"
+                                               class="btn btn-outline-primary" title="View Details">
+                                                <i class="bi bi-eye"></i>
+                                            </a>
+                                            <a asp-action="Edit" asp-route-id="@share.ShareId"
+                                               class="btn btn-outline-secondary" title="Edit">
+                                                <i class="bi bi-pencil"></i>
+                                            </a>
+                                            <a asp-action="Delete" asp-route-id="@share.ShareId"
+                                               class="btn btn-outline-danger" title="Delete">
+                                                <i class="bi bi-trash"></i>
+                                            </a>
+                                        </div>
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            }
+            else
+            {
+                <div class="text-center py-5">
+                    <i class="bi bi-inbox display-4 text-muted"></i>
+                    <p class="text-muted mt-3">No share certificates found.</p>
+                    <a asp-action="Create" class="btn btn-primary">Issue New Certificate</a>
+                </div>
+            }
+        </div>
+
+        @if (Model.Shares.Any())
+        {
+            <div class="card-footer bg-white">
+                <p class="text-muted mb-0">
+                    Showing @Model.Shares.Count of @Model.Statistics.TotalCertificates certificates
+                </p>
+            </div>
+        }
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        setTimeout(function() {
+            $('.alert').alert('close');
+        }, 5000);
+    </script>
+}

@@ -1,0 +1,417 @@
+﻿@model SaccoShareManagementSys.ViewModels.DividendCalculationViewModel
+@{
+    ViewData["Title"] = "Calculate Dividend";
+    var isCalculated = Model.ShareholderDividends != null && Model.ShareholderDividends.Any();
+}
+
+<div class="container-fluid">
+    <!-- Page Header -->
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h2 class="mb-1">Dividend Calculator</h2>
+            <p class="text-muted">Calculate and preview dividend distribution to shareholders</p>
+        </div>
+        <a asp-action="Index" class="btn btn-outline-secondary">
+            <i class="bi bi-arrow-left me-2"></i>Back to List
+        </a>
+    </div>
+
+    <div class="row">
+        <!-- Calculation Form -->
+        <div class="col-lg-4">
+            <div class="card border-0 shadow-sm sticky-top" style="top: 20px;">
+                <div class="card-header bg-primary text-white">
+                    <h5 class="mb-0">
+                        <i class="bi bi-calculator me-2"></i>Calculation Parameters
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <form asp-action="Calculate" method="post" id="calculationForm">
+                        <!-- Year Selection -->
+                        <div class="mb-3">
+                            <label class="form-label">Dividend Year *</label>
+                            <select name="year" class="form-select" required>
+                                @for (int year = DateTime.Now.Year; year >= DateTime.Now.Year - 5; year--)
+                                {
+                                    <option value="@year" selected="@(Model.Year == year)">@year</option>
+                                }
+                            </select>
+                        </div>
+
+                        <!-- Month Selection -->
+                        <div class="mb-3">
+                            <label class="form-label">Dividend Month *</label>
+                            <select name="month" class="form-select" required>
+                                @for (int month = 1; month <= 12; month++)
+                                {
+                                    var monthName = new DateTime(DateTime.Now.Year, month, 1).ToString("MMMM");
+                                    <option value="@month" selected="@(Model.Month == month)">@monthName</option>
+                                }
+                            </select>
+                        </div>
+
+                        <!-- Total Profit -->
+                        <div class="mb-3">
+                            <label class="form-label">Total Profit (ETB) *</label>
+                            <div class="input-group">
+                                <span class="input-group-text">ETB</span>
+                                <input type="number" name="totalProfit" class="form-control"
+                                       step="0.01" min="0" value="@Model.TotalProfit"
+                                       placeholder="0.00" required id="totalProfit" />
+                            </div>
+                            <small class="form-text text-muted">Total profit available for distribution</small>
+                        </div>
+
+                        <!-- Dividend Rate -->
+                        <div class="mb-3">
+                            <label class="form-label">Dividend Rate (%) *</label>
+                            <div class="input-group">
+                                <input type="number" name="dividendRate" class="form-control"
+                                       step="0.01" min="0" max="100" value="@Model.DividendRate"
+                                       placeholder="0.00" required id="dividendRate" />
+                                <span class="input-group-text">%</span>
+                            </div>
+                            <small class="form-text text-muted">Percentage of profit to distribute</small>
+                        </div>
+
+                        <hr class="my-4">
+
+                        <!-- Calculated Summary -->
+                        <div class="bg-light rounded p-3 mb-3">
+                            <h6 class="mb-3">Preview Summary</h6>
+                            <div class="d-flex justify-content-between mb-2">
+                                <span class="text-muted small">Total to Distribute:</span>
+                                <strong class="text-success" id="totalDistribute">ETB 0.00</strong>
+                            </div>
+                            <div class="d-flex justify-content-between mb-2">
+                                <span class="text-muted small">To be Retained:</span>
+                                <strong class="text-info" id="totalRetained">ETB 0.00</strong>
+                            </div>
+                        </div>
+
+                        <!-- Action Buttons -->
+                        <button type="submit" class="btn btn-primary w-100 mb-2">
+                            <i class="bi bi-calculator me-2"></i>Calculate Dividends
+                        </button>
+
+                        @if (isCalculated)
+                        {
+                            <a asp-action="Create"
+                               asp-route-year="@Model.Year"
+                               asp-route-month="@Model.Month"
+                               asp-route-totalProfit="@Model.TotalProfit"
+                               asp-route-dividendRate="@Model.DividendRate"
+                               asp-route-totalShares="@Model.TotalSharesInvolved"
+                               class="btn btn-success w-100">
+                                <i class="bi bi-plus-circle me-2"></i>Create Dividend Record
+                            </a>
+                        }
+                    </form>
+                </div>
+
+                <!-- Information Card -->
+                <div class="card-footer bg-light">
+                    <h6 class="mb-2"><i class="bi bi-info-circle me-2"></i>How it works</h6>
+                    <ul class="small mb-0 ps-3">
+                        <li>Enter total profit and dividend rate</li>
+                        <li>System calculates per-shareholder dividends</li>
+                        <li>Review the distribution table</li>
+                        <li>Create official dividend record</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <!-- Calculation Results -->
+        <div class="col-lg-8">
+            @if (isCalculated)
+            {
+                <!-- Summary Cards -->
+                <div class="row mb-4">
+                    <div class="col-md-3 mb-3">
+                        <div class="card border-0 shadow-sm">
+                            <div class="card-body">
+                                <div class="d-flex justify-content-between align-items-center mb-2">
+                                    <h6 class="text-muted small mb-0">Total Profit</h6>
+                                    <i class="bi bi-cash-stack text-primary"></i>
+                                </div>
+                                <h4 class="mb-0">KES @Model.TotalProfit.ToString("N0")</h4>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-3 mb-3">
+                        <div class="card border-0 shadow-sm">
+                            <div class="card-body">
+                                <div class="d-flex justify-content-between align-items-center mb-2">
+                                    <h6 class="text-muted small mb-0">Dividend Rate</h6>
+                                    <i class="bi bi-percent text-info"></i>
+                                </div>
+                                <h4 class="mb-0">@Model.DividendRate.ToString("F2")%</h4>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-3 mb-3">
+                        <div class="card border-0 shadow-sm">
+                            <div class="card-body">
+                                <div class="d-flex justify-content-between align-items-center mb-2">
+                                    <h6 class="text-muted small mb-0">To Distribute</h6>
+                                    <i class="bi bi-cash-coin text-success"></i>
+                                </div>
+                                <h4 class="mb-0 text-success">ETB @Model.TotalDividendAmount.ToString("N0")</h4>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-3 mb-3">
+                        <div class="card border-0 shadow-sm">
+                            <div class="card-body">
+                                <div class="d-flex justify-content-between align-items-center mb-2">
+                                    <h6 class="text-muted small mb-0">Shareholders</h6>
+                                    <i class="bi bi-people text-warning"></i>
+                                </div>
+                                <h4 class="mb-0">@Model.ShareholderDividends!.Count</h4>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Distribution Breakdown -->
+                <div class="card border-0 shadow-sm mb-4">
+                    <div class="card-header bg-success text-white">
+                        <h5 class="mb-0">
+                            <i class="bi bi-pie-chart me-2"></i>Distribution Breakdown
+                        </h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <div class="bg-light rounded p-3">
+                                    <div class="d-flex justify-content-between align-items-center mb-2">
+                                        <span class="text-muted">Total Shares in SACCO</span>
+                                        <i class="bi bi-pie-chart-fill text-primary"></i>
+                                    </div>
+                                    <h3 class="mb-0">@Model.TotalSharesInvolved.ToString("N2")</h3>
+                                </div>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <div class="bg-light rounded p-3">
+                                    <div class="d-flex justify-content-between align-items-center mb-2">
+                                        <span class="text-muted">Dividend per Share</span>
+                                        <i class="bi bi-calculator text-info"></i>
+                                    </div>
+                                    <h3 class="mb-0">
+                                        ETB @((Model.TotalSharesInvolved > 0 ? Model.TotalDividendAmount / Model.TotalSharesInvolved : 0).ToString("N4"))
+                                    </h3>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Progress Bar -->
+                        <div class="mt-3">
+                            <div class="d-flex justify-content-between mb-2">
+                                <span class="small">Distribution Progress</span>
+                                <span class="small">@Model.DividendRate.ToString("F1")% of Total Profit</span>
+                            </div>
+                            <div class="progress" style="height: 30px;">
+                                <div class="progress-bar bg-success" role="progressbar"
+                                     style="width: @Model.DividendRate%">
+                                    ETB @Model.TotalDividendAmount.ToString("N0")
+                                </div>
+                            </div>
+                            <div class="d-flex justify-content-between mt-2 small text-muted">
+                                <span>ETB 0</span>
+                                <span>ETB @Model.TotalProfit.ToString("N0")</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Shareholder Distribution Table -->
+                <div class="card border-0 shadow-sm">
+                    <div class="card-header bg-white py-3 d-flex justify-content-between align-items-center">
+                        <h5 class="mb-0">
+                            <i class="bi bi-table me-2"></i>Shareholder Distribution Details
+                        </h5>
+                        <button class="btn btn-sm btn-outline-primary" onclick="exportToCSV()">
+                            <i class="bi bi-download me-2"></i>Export CSV
+                        </button>
+                    </div>
+                    <div class="card-body p-0">
+                        <div class="table-responsive">
+                            <table class="table table-hover mb-0" id="distributionTable">
+                                <thead class="table-light">
+                                    <tr>
+                                        <th>#</th>
+                                        <th>Shareholder Name</th>
+                                        <th>Shareholder ID</th>
+                                        <th class="text-end">Total Shares</th>
+                                        <th class="text-center">Share %</th>
+                                        <th class="text-end">Dividend Amount</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @{
+                                        int rowNumber = 1;
+                                    }
+                                    @foreach (var item in Model.ShareholderDividends)
+                                    {
+                                        var sharePercentage = Model.TotalSharesInvolved > 0
+                                        ? (item.TotalShares / Model.TotalSharesInvolved * 100)
+                                        : 0;
+
+                                        <tr>
+                                            <td>@rowNumber</td>
+                                            <td>
+                                                <strong>@item.ShareholderName</strong>
+                                            </td>
+                                            <td>
+                                                <span class="badge bg-secondary">#@item.ShareholderId.ToString("D4")</span>
+                                            </td>
+                                            <td class="text-end">
+                                                <strong>@item.TotalShares.ToString("N2")</strong>
+                                            </td>
+                                            <td class="text-center">
+                                                <div class="d-flex align-items-center justify-content-center">
+                                                    <div class="progress flex-grow-1 me-2" style="height: 20px; max-width: 100px;">
+                                                        <div class="progress-bar bg-info" role="progressbar"
+                                                             style="width: @sharePercentage%">
+                                                        </div>
+                                                    </div>
+                                                    <small>@sharePercentage.ToString("F1")%</small>
+                                                </div>
+                                            </td>
+                                            <td class="text-end">
+                                                <strong class="text-success">ETB @item.DividendAmount.ToString("N2")</strong>
+                                            </td>
+                                        </tr>
+                                        rowNumber++;
+                                    }
+                                </tbody>
+                                <tfoot class="table-light">
+                                    <tr>
+                                        <th colspan="3" class="text-end">TOTAL:</th>
+                                        <th class="text-end">@Model.TotalSharesInvolved.ToString("N2")</th>
+                                        <th class="text-center">100%</th>
+                                        <th class="text-end">
+                                            <strong class="text-success">KES @Model.TotalDividendAmount.ToString("N2")</strong>
+                                        </th>
+                                    </tr>
+                                </tfoot>
+                            </table>
+                        </div>
+                    </div>
+                    <div class="card-footer bg-white">
+                        <p class="text-muted mb-0">
+                            <i class="bi bi-info-circle me-2"></i>
+                            Showing dividend distribution for @Model.ShareholderDividends.Count active shareholders
+                        </p>
+                    </div>
+                </div>
+
+                <!-- Action Card -->
+                <div class="card border-success mt-4">
+                    <div class="card-body text-center">
+                        <h5 class="mb-3">Ready to Create Dividend Record?</h5>
+                        <p class="text-muted mb-4">
+                            Review the distribution above. If everything looks correct, create the official dividend record.
+                        </p>
+                        <a asp-action="Create"
+                           asp-route-year="@Model.Year"
+                           asp-route-month="@Model.Month"
+                           asp-route-totalProfit="@Model.TotalProfit"
+                           asp-route-dividendRate="@Model.DividendRate"
+                           asp-route-totalShares="@Model.TotalSharesInvolved"
+                           class="btn btn-success btn-lg">
+                            <i class="bi bi-plus-circle me-2"></i>Create Dividend Record
+                        </a>
+                    </div>
+                </div>
+            }
+            else
+            {
+                <!-- Empty State -->
+                <div class="card border-0 shadow-sm">
+                    <div class="card-body text-center py-5">
+                        <div class="bg-primary bg-opacity-10 rounded-circle d-inline-flex align-items-center justify-content-center mb-4"
+                             style="width: 120px; height: 120px;">
+                            <i class="bi bi-calculator display-3 text-primary"></i>
+                        </div>
+                        <h3 class="mb-3">Calculate Dividend Distribution</h3>
+                        <p class="text-muted mb-4">
+                            Enter the dividend parameters in the form on the left to calculate<br>
+                            how dividends will be distributed among shareholders.
+                        </p>
+                        <div class="row justify-content-center">
+                            <div class="col-md-8">
+                                <div class="bg-light rounded p-4">
+                                    <h6 class="mb-3">What you'll see:</h6>
+                                    <ul class="list-unstyled text-start">
+                                        <li class="mb-2">
+                                            <i class="bi bi-check-circle text-success me-2"></i>
+                                            Total dividend amount to be distributed
+                                        </li>
+                                        <li class="mb-2">
+                                            <i class="bi bi-check-circle text-success me-2"></i>
+                                            Breakdown per shareholder based on shares owned
+                                        </li>
+                                        <li class="mb-2">
+                                            <i class="bi bi-check-circle text-success me-2"></i>
+                                            Percentage distribution visualization
+                                        </li>
+                                        <li class="mb-2">
+                                            <i class="bi bi-check-circle text-success me-2"></i>
+                                            Option to create official dividend record
+                                        </li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        $(document).ready(function() {
+            // Update preview summary
+            function updatePreview() {
+                const profit = parseFloat($('#totalProfit').val()) || 0;
+                const rate = parseFloat($('#dividendRate').val()) || 0;
+                const distribute = profit * (rate / 100);
+                const retained = profit - distribute;
+
+                $('#totalDistribute').text('ETB ' + distribute.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 }));
+                $('#totalRetained').text('ETB ' + retained.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 }));
+            }
+
+            $('#totalProfit, #dividendRate').on('input', updatePreview);
+            updatePreview();
+
+            // Export to CSV function
+            window.exportToCSV = function() {
+                let csv = 'Shareholder Name,Shareholder ID,Total Shares,Share %,Dividend Amount\n';
+
+                $('#distributionTable tbody tr').each(function() {
+                    const cols = $(this).find('td');
+                    const name = $(cols[1]).text().trim();
+                    const id = $(cols[2]).text().trim();
+                    const shares = $(cols[3]).text().trim();
+                    const percentage = $(cols[4]).text().trim();
+                    const amount = $(cols[5]).text().trim();
+
+                    csv += `"${name}","${id}","${shares}","${percentage}","${amount}"\n`;
+                });
+
+                const blob = new Blob([csv], { type: 'text/csv' });
+                const url = window.URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = 'dividend-distribution-@Model.Year-@Model.Month';
+                a.click();
+                window.URL.revokeObjectURL(url);
+            };
+        });
+    </script>
+}

@@ -1,0 +1,146 @@
+﻿@model SaccoShareManagementSys.Models.Dividend
+@{
+    ViewData["Title"] = "Delete Dividend";
+    var monthName = new DateTime(Model.Year, Model.Month, 1).ToString("MMMM");
+}
+
+<div class="container-fluid">
+    <!-- Page Header -->
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h2 class="mb-1 text-danger">
+                <i class="bi bi-exclamation-triangle me-2"></i>Delete Dividend
+            </h2>
+            <p class="text-muted">Are you sure you want to delete this dividend record?</p>
+        </div>
+        <a asp-action="Index" class="btn btn-outline-secondary">
+            <i class="bi bi-arrow-left me-2"></i>Back to List
+        </a>
+    </div>
+
+    <div class="row">
+        <div class="col-lg-8 mx-auto">
+            <!-- Warning Alert -->
+            <div class="alert alert-danger border-danger" role="alert">
+                <h5 class="alert-heading">
+                    <i class="bi bi-exclamation-triangle-fill me-2"></i>Warning!
+                </h5>
+                <p class="mb-0">
+                    You are about to permanently delete this dividend record. This action cannot be undone.
+                    @if (Model.Status == "Distributed")
+                    {
+                        <strong class="d-block mt-2">
+                            This dividend has already been distributed to shareholders. Deleting it may cause data inconsistencies!
+                        </strong>
+                    }
+                </p>
+            </div>
+
+            <!-- Dividend Details Card -->
+            <div class="card border-danger shadow-sm mb-4">
+                <div class="card-header bg-danger text-white">
+                    <h5 class="mb-0">
+                        <i class="bi bi-file-earmark-text me-2"></i>Dividend to be Deleted
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label class="text-muted small d-block mb-1">Dividend Period</label>
+                            <h4 class="mb-0">@monthName @Model.Year</h4>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label class="text-muted small d-block mb-1">Status</label>
+                            @if (Model.Status == "Distributed")
+                            {
+                                <span class="badge bg-success fs-6">
+                                    <i class="bi bi-check-circle me-1"></i>Distributed
+                                </span>
+                            }
+                            else if (Model.Status == "Approved")
+                            {
+                                <span class="badge bg-info fs-6">Approved</span>
+                            }
+                            else if (Model.Status == "Pending")
+                            {
+                                <span class="badge bg-warning fs-6">Pending</span>
+                            }
+                            else
+                            {
+                                <span class="badge bg-secondary fs-6">Cancelled</span>
+                            }
+                        </div>
+                    </div>
+
+                    <hr>
+
+                    <div class="row">
+                        <div class="col-md-3 mb-3">
+                            <label class="text-muted small d-block mb-1">Total Profit</label>
+                            <p class="mb-0"><strong>ETB @Model.TotalProfit.ToString("N2")</strong></p>
+                        </div>
+                        <div class="col-md-3 mb-3">
+                            <label class="text-muted small d-block mb-1">Dividend Rate</label>
+                            <p class="mb-0"><strong>@Model.DividendRate.ToString("F2")%</strong></p>
+                        </div>
+                        <div class="col-md-3 mb-3">
+                            <label class="text-muted small d-block mb-1">Total Shares</label>
+                            <p class="mb-0"><strong>@Model.TotalShares.ToString("N2")</strong></p>
+                        </div>
+                        <div class="col-md-3 mb-3">
+                            <label class="text-muted small d-block mb-1">Total Paid</label>
+                            <p class="mb-0"><strong class="text-danger">ETB @Model.TotalDividendPaid.ToString("N2")</strong></p>
+                        </div>
+                    </div>
+
+                    <hr>
+
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label class="text-muted small d-block mb-1">Distribution Date</label>
+                            <p class="mb-0">
+                                <i class="bi bi-calendar3 me-2"></i>
+                                @Model.DistributionDate.ToString("dd MMMM yyyy")
+                            </p>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label class="text-muted small d-block mb-1">Created At</label>
+                            <p class="mb-0">
+                                <i class="bi bi-clock me-2"></i>
+                                @Model.CreatedAt.ToString("dd MMM yyyy HH:mm")
+                            </p>
+                        </div>
+                    </div>
+
+                    @if (!string.IsNullOrWhiteSpace(Model.Notes))
+                    {
+                        <hr>
+                        <div>
+                            <label class="text-muted small d-block mb-2">Notes</label>
+                            <p class="mb-0">@Model.Notes</p>
+                        </div>
+                    }
+                </div>
+            </div>
+
+            <!-- Confirmation Form -->
+            <div class="card border-0 shadow-sm">
+                <div class="card-body">
+                    <form asp-action="Delete" method="post">
+                        <input type="hidden" asp-for="DividendId" />
+                        @Html.AntiForgeryToken()
+
+                        <div class="d-flex justify-content-between align-items-center">
+                            <a asp-action="Details" asp-route-id="@Model.DividendId" class="btn btn-outline-secondary">
+                                <i class="bi bi-x-circle me-2"></i>Cancel
+                            </a>
+                            <button type="submit" class="btn btn-danger" onclick="return confirm('Are you absolutely sure you want to delete this dividend record? This action cannot be undone!')">
+                                <i class="bi bi-trash me-2"></i>Yes, Delete Dividend
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

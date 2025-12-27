@@ -1,0 +1,300 @@
+﻿@model SaccoShareManagementSys.ViewModels.ShareTransferIndexViewModel
+@{
+    ViewData["Title"] = "Share Transfers";
+}
+
+<div class="container-fluid">
+    <!-- Page Header -->
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h2 class="mb-1">Share Transfer Management</h2>
+            <p class="text-muted">Manage share transfers between shareholders</p>
+        </div>
+        <a asp-action="Create" class="btn btn-primary">
+            <i class="bi bi-arrow-left-right me-2"></i>New Transfer
+        </a>
+    </div>
+
+    <!-- Alert Messages -->
+    @if (TempData["SuccessMessage"] != null)
+    {
+        <div class="alert alert-success alert-dismissible fade show" role="alert">
+            <i class="bi bi-check-circle me-2"></i>@TempData["SuccessMessage"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+    }
+    @if (TempData["ErrorMessage"] != null)
+    {
+        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+            <i class="bi bi-exclamation-triangle me-2"></i>@TempData["ErrorMessage"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+    }
+
+    <!-- Statistics Cards -->
+    <div class="row mb-4">
+
+        <!-- 1. Total Transfers -->
+        <div class="col-md-3 mb-3">
+            <div class="card border-0 shadow-sm h-100">
+                <div class="card-body d-flex justify-content-between align-items-start">
+                    <div>
+                        <h6 class="text-muted mb-1">Total Transfers</h6>
+                        <h3 class="mb-0">@Model.Statistics.TotalTransfers</h3>
+                        <small class="text-muted">All time</small>
+                    </div>
+                    <div class="rounded-circle bg-primary bg-opacity-10 d-flex align-items-center justify-content-center"
+                         style="width:36px; height:36px; flex-shrink:0;">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"
+                             style="width:16px; height:16px; display:block;"
+                             fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                             class="text-blue-600">
+                            <path d="m16 3 4 4-4 4"></path>
+                            <path d="M20 7H4"></path>
+                            <path d="m8 21-4-4 4-4"></path>
+                            <path d="M4 17h16"></path>
+                        </svg>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 2. Total Value Transferred -->
+        <div class="col-md-3 mb-3">
+            <div class="card border-0 shadow-sm h-100">
+                <div class="card-body d-flex justify-content-between align-items-start">
+                    <div>
+                        <h6 class="text-muted mb-1">Total Value Transferred</h6>
+                        <h3 class="mb-0">ETB @((Model.Statistics.TotalTransfers / 1000).ToString("N1"))K</h3>
+                        <small class="text-muted">Lifetime</small>
+                    </div>
+                    <div class="rounded-circle bg-success bg-opacity-10 d-flex align-items-center justify-content-center"
+                         style="width:36px; height:36px; flex-shrink:0;">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"
+                             style="width:16px; height:16px; display:block;"
+                             fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                             class="text-green-600">
+                            <path d="M21.801 10A10 10 0 1 1 17 3.335"></path>
+                            <path d="m9 11 3 3L22 4"></path>
+                        </svg>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 3. This Month -->
+        <div class="col-md-3 mb-3">
+            <div class="card border-0 shadow-sm h-100">
+                <div class="card-body d-flex justify-content-between align-items-start">
+                    <div>
+                        <h6 class="text-muted mb-1">This Month</h6>
+                        <h3 class="mb-0">@Model.Statistics.TransfersThisMonth</h3>
+                        <small class="text-muted">@DateTime.Now.ToString("MMMM")</small>
+                    </div>
+                    <div class="rounded-circle bg-info bg-opacity-10 d-flex align-items-center justify-content-center"
+                         style="width:36px; height:36px; flex-shrink:0;">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"
+                             style="width:16px; height:16px; display:block;"
+                             fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                             class="text-purple-600">
+                            <path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"></path>
+                            <circle cx="12" cy="7" r="4"></circle>
+                        </svg>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 4. Average Transfer -->
+        <div class="col-md-3 mb-3">
+            <div class="card border-0 shadow-sm h-100">
+                <div class="card-body d-flex justify-content-between align-items-start">
+                    <div>
+                        <h6 class="text-muted mb-1">Average Transfer</h6>
+                        <h3 class="mb-0">ETB @Model.Statistics.AverageTransferAmount.ToString("N0")</h3>
+                        <small class="text-muted">Per transfer</small>
+                    </div>
+                    <div class="rounded-circle bg-warning bg-opacity-10 d-flex align-items-center justify-content-center"
+                         style="width:36px; height:36px; flex-shrink:0;">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"
+                             style="width:16px; height:16px; display:block;"
+                             fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                             class="text-orange-600">
+                            <path d="M16 7h6v6"></path>
+                            <path d="m22 7-8.5 8.5-5-5L2 17"></path>
+                        </svg>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- Transfers Table -->
+    <div class="card border-0 shadow-sm">
+        <div class="card-header bg-white py-3">
+            <h5 class="mb-0">
+                <i class="bi bi-table me-2"></i>Transfer History
+            </h5>
+        </div>
+
+        <!-- Filters -->
+        <div class="card-body border-bottom">
+            <form asp-action="Index" method="get">
+                <div class="row g-3">
+                    <div class="col-md-4">
+                        <div class="input-group">
+                            <span class="input-group-text"><i class="bi bi-search"></i></span>
+                            <input type="text" class="form-control" name="SearchTerm"
+                                   value="@Model.Filter.SearchTerm"
+                                   placeholder="Search by shareholder name...">
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <input type="date" class="form-control" name="FromDate" value="@Model.Filter.FromDate?.ToString("yyyy-MM-dd")" />
+                    </div>
+                    <div class="col-md-3">
+                        <input type="date" class="form-control" name="ToDate" value="@Model.Filter.ToDate?.ToString("yyyy-MM-dd")" />
+                    </div>
+                    <div class="col-md-2">
+                        <button type="submit" class="btn btn-primary w-100">
+                            <i class="bi bi-funnel me-2"></i>Filter
+                        </button>
+                    </div>
+                </div>
+            </form>
+        </div>
+
+        <div class="card-body p-0">
+            @if (Model.Transfers.Any())
+            {
+                <div class="table-responsive">
+                    <table class="table table-hover mb-0">
+                        <thead class="table-light">
+                            <tr>
+                                <th>Transfer Date</th>
+                                <th>From Shareholder</th>
+                                <th>To Shareholder</th>
+                                <th class="text-end">Share Amount</th>
+                                <th>Status</th>
+                                <th>Notes</th>
+                                <th class="text-center">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var transfer in Model.Transfers)
+                            {
+                                <tr>
+                                    <td>
+                                        <i class="bi bi-calendar3 me-2 text-muted"></i>
+                                        <strong>@transfer.TransferDate.ToString("dd MMM yyyy")</strong>
+                                        <br><small class="text-muted">@transfer.TransferDate.ToString("HH:mm")</small>
+                                    </td>
+                                    <td>
+                                        <div class="d-flex align-items-center">
+                                            <!-- Sender Icon -->
+                                            <div class="rounded-circle border border-danger d-flex align-items-center justify-content-center me-2"
+                                                 style="width:32px; height:32px; flex-shrink:0;">
+                                                <i class="bi bi-arrow-right text-danger"></i>
+                                            </div>
+                                            <div>
+                                                <strong>@transfer.FromShareholderName</strong>
+                                                <br><small class="text-muted">ID: #@transfer.FromShareholderId.ToString("D4")</small>
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <div class="d-flex align-items-center">
+                                            <!-- Receiver Icon -->
+                                            <div class="rounded-circle border border-success d-flex align-items-center justify-content-center me-2"
+                                                 style="width:32px; height:32px; flex-shrink:0;">
+                                                <i class="bi bi-arrow-left text-success"></i>
+                                            </div>
+                                            <div>
+                                                <strong>@transfer.ToShareholderName</strong>
+                                                <br><small class="text-muted">ID: #@transfer.ToShareholderId.ToString("D4")</small>
+                                            </div>
+                                        </div>
+                                    </td>
+
+                                    <td class="text-end">
+                                        <strong class="text-primary">ETB @transfer.ShareAmount.ToString("N2")</strong>
+                                    </td>
+                                    <td>
+                                        @if (transfer.Status == "Completed")
+                                        {
+                                            <span class="badge bg-success">
+                                                <i class="bi bi-check-circle me-1"></i>Completed
+                                            </span>
+                                        }
+                                        else if (transfer.Status == "Pending")
+                                        {
+                                            <span class="badge bg-warning">Pending</span>
+                                        }
+                                        else
+                                        {
+                                            <span class="badge bg-danger">Cancelled</span>
+                                        }
+                                    </td>
+                                    <td>
+                                        @if (!string.IsNullOrEmpty(transfer.Notes))
+                                        {
+                                            <span title="@transfer.Notes">
+                                                @(transfer.Notes.Length > 30 ? transfer.Notes.Substring(0, 30) + "..." : transfer.Notes)
+                                            </span>
+                                        }
+                                        else
+                                        {
+                                            <small class="text-muted">-</small>
+                                        }
+                                    </td>
+                                    <td class="text-center">
+                                        <div class="btn-group btn-group-sm">
+                                            <a asp-action="Details" asp-route-id="@transfer.TransferId"
+                                               class="btn btn-outline-primary" title="View Details">
+                                                <i class="bi bi-eye"></i>
+                                            </a>
+                                            <a asp-action="Edit" asp-route-id="@transfer.TransferId"
+                                               class="btn btn-outline-secondary" title="Edit">
+                                                <i class="bi bi-pencil"></i>
+                                            </a>
+                                            <a asp-action="Delete" asp-route-id="@transfer.TransferId"
+                                               class="btn btn-outline-danger" title="Delete">
+                                                <i class="bi bi-trash"></i>
+                                            </a>
+                                        </div>
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            }
+            else
+            {
+                <div class="text-center py-5">
+                    <i class="bi bi-inbox display-4 text-muted"></i>
+                    <p class="text-muted mt-3">No share transfers found.</p>
+                    <a asp-action="Create" class="btn btn-primary">Create Transfer</a>
+                </div>
+            }
+        </div>
+
+        @if (Model.Transfers.Any())
+        {
+            <div class="card-footer bg-white">
+                <p class="text-muted mb-0">
+                    Showing @Model.Transfers.Count of @Model.Statistics.TotalTransfers transfers
+                </p>
+            </div>
+        }
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        setTimeout(function() {
+            $('.alert').alert('close');
+        }, 5000);
+    </script>
+}
