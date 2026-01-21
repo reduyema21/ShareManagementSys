@@ -1,0 +1,18 @@
+﻿@model SaccoShareManagementSys.Models.ProfileImg
+
+<h4>Upload Profile Image</h4>
+
+<form asp-controller="ProfileImg"
+      asp-action="Upload"
+      method="post"
+      enctype="multipart/form-data">
+
+    <input type="file"
+           name="UploadImage"
+           class="form-control mb-2"
+           required />
+
+    <button type="submit" class="btn btn-primary btn-sm">
+        Upload
+    </button>
+</form>

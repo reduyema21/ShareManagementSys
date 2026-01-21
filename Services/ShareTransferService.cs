@@ -332,9 +332,9 @@ namespace SaccoShareManagementSys.Services
                 .OrderBy(s => s.FullName)
                 .ToListAsync();
         }
-        //2
+       
 
-        // 1. All requests where the user is involved
+        // . All requests where the user is involved
         public async Task<List<ShareTransfer>> GetSentRequestsAsync(int shareholderId)
         {
             return await _context.ShareTransfers

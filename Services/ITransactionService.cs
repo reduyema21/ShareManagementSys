@@ -20,5 +20,7 @@ namespace SaccoShareManagementSys.Services
         Task<List<Share>> GetSharesByShareholderIdAsync(int shareholderId);
 
         Task<IEnumerable<ShareTransaction>> GetUserTransactionsAsync(int shareholderId);
+        Task<ShareTransaction?> GetUserLastTransactionAsync(int shareholderId);
+
     }
 }

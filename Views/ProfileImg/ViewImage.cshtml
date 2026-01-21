@@ -1,0 +1,13 @@
+﻿@model SaccoShareManagementSys.Models.ProfileImg
+
+<h4>My Profile Image</h4>
+
+@if (Model != null)
+{
+    <img src="@Url.Action("ShowImage", "ProfileImg", new { id = Model.Id })"
+         class="img-thumbnail" style="max-width:200px;" />
+}
+else
+{
+    <p>No profile image uploaded yet.</p>
+}

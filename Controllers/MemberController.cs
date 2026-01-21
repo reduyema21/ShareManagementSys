@@ -102,12 +102,19 @@ public class MemberController : Controller
 
         int shareholderId = shareholder.ShareholderId;
 
+        // Get shares and dividends
         var (totalShares, totalValue) = await _shareService.GetUserSharesSummaryAsync(shareholderId);
         var totalDividends = await _dividendService.GetUserTotalDividendsAsync(shareholderId);
+
+        // Get transfers
         var sentTransfers = await _shareTransferService.GetSentRequestsAsync(shareholderId);
         var receivedTransfers = await _shareTransferService.GetReceivedRequestsAsync(shareholderId);
         var allTransfers = await _shareTransferService.GetRequestsForUserAsync(shareholderId);
 
+        var lastTransaction = await _transactionService.GetUserLastTransactionAsync(shareholderId);
+        var recentTransactions = (await _transactionService.GetUserTransactionsAsync(shareholderId)).ToList();
+
+        // 4 Build view model
         var model = new MemberDashboardViewModel
         {
             TotalShares = totalShares,
@@ -115,7 +122,11 @@ public class MemberController : Controller
             TotalDividends = totalDividends,
             SentTransfers = sentTransfers,
             ReceivedTransfers = receivedTransfers,
-            AllTransfers = allTransfers
+            AllTransfers = allTransfers,
+            LastTransaction = lastTransaction,
+            RecentTransactions = recentTransactions.Take(8).ToList()
+
+            // only show latest 8
         };
 
         return View(model);

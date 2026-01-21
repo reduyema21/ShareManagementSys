@@ -3,6 +3,12 @@
     ViewData["Title"] = "Member Dashboard";
     Layout = "_Layout";
 }
+<li class="nav-item">
+    <a asp-controller="ProfileImg" asp-action="Upload" class="nav-link">
+        <i class="nav-icon fas fa-image"></i>
+        <p>Upload Profile Image</p>
+    </a>
+</li>
 
 <div class="container-fluid">
     <h2 class="mb-3">👤 Member Dashboard</h2>
@@ -16,13 +22,13 @@
         </div>
         <div class="col-md-4">
             <div class="card p-3 shadow-sm">
-                <h6 class="text-muted">Total Share Value (KES)</h6>
+                <h6 class="text-muted">Total Share Value (ETB)</h6>
                 <h3>@Model.TotalShareValue</h3>
             </div>
         </div>
         <div class="col-md-4">
             <div class="card p-3 shadow-sm">
-                <h6 class="text-muted">Total Dividends (KES)</h6>
+                <h6 class="text-muted">Total Dividends (ETB)</h6>
                 <h3>@Model.TotalDividends</h3>
             </div>
         </div>
@@ -35,15 +41,16 @@
                 <h5>Last Transaction</h5>
                 @if (Model.LastTransaction != null)
                 {
-                    <p><strong>Date:</strong> @Model.LastTransaction.TransactionDate.ToShortDateString()</p>
-                    <p><strong>Type:</strong> @Model.LastTransaction.TransactionType</p>
-                    <p><strong>Amount:</strong> KES @Model.LastTransaction.Amount</p>
-                    <p><strong>Description:</strong> @Model.LastTransaction.Description</p>
+                    <p><strong>Date:</strong> @Model.LastTransaction?.TransactionDate.ToShortDateString()</p>
+                    <p><strong>Type:</strong> @Model.LastTransaction?.TransactionType</p>
+                    <p><strong>Amount:</strong> ETB @Model.LastTransaction?.Amount</p>
+                    <p><strong>Description:</strong> @Model.LastTransaction?.Description</p>
                 }
                 else
                 {
                     <p class="text-muted">No transactions yet.</p>
                 }
+
             </div>
         </div>
 
@@ -57,7 +64,7 @@
                             <tr>
                                 <th>From</th>
                                 <th>To</th>
-                                <th>Amount (KES)</th>
+                                <th>Amount (ETB)</th>
                                 <th>Status</th>
                                 <th>Date</th>
                             </tr>
@@ -91,7 +98,7 @@
         {
             <table class="table table-striped">
                 <thead>
-                    <tr><th>Date</th><th>Type</th><th>Amount (KES)</th><th>Description</th></tr>
+                    <tr><th>Date</th><th>Type</th><th>Amount (ETB)</th><th>Description</th></tr>
                 </thead>
                 <tbody>
                     @foreach (var t in Model.RecentTransactions.Take(8))

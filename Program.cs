@@ -13,15 +13,10 @@ using SaccoShareManagementSys.Services.SaccoManagement.Services;
 //Role: Admin
 
 var builder = WebApplication.CreateBuilder(args);
-// Allow any host (Render will send requests from its domain)
-builder.WebHost.ConfigureKestrel(options =>
-{
-    options.AddServerHeader = false; // optional
-})
-.UseUrls("http://0.0.0.0:8080"); // Ensure app listens on all interfaces
-
-// Add services to the container.
-//builder.Services.AddControllersWithViews();
+//// Listen on all interfaces for Render
+//builder.WebHost.UseUrls("http://0.0.0.0:8080");
+//// Add services to the container.
+////builder.Services.AddControllersWithViews();
 
 builder.Services
     .AddControllersWithViews()
@@ -50,8 +45,8 @@ builder.Services.AddDefaultIdentity<IdentityUser>(options =>
 builder.Services.ConfigureApplicationCookie(options =>
 {
     options.LoginPath = "/Identity/Account/Login";       // Correct login path
-    options.AccessDeniedPath = "/Identity/Account/AccessDenied"; // Optional
-    options.ExpireTimeSpan = TimeSpan.FromMinutes(30);   // Cookie lifetime
+    options.AccessDeniedPath = "/Identity/Account/AccessDenied"; 
+    options.ExpireTimeSpan = TimeSpan.FromMinutes(5);   // Cookie lifetime or session timeout
     options.SlidingExpiration = true;
 });
 
@@ -127,10 +122,6 @@ else
     app.UseDeveloperExceptionPage();
 }
 
-// For hobby/demo, allow all hosts
-app.Urls.Clear();
-app.Urls.Add("http://0.0.0.0:8080");
-
 
 app.UseHttpsRedirection();
 app.UseStaticFiles();
@@ -204,15 +195,3 @@ if (app.Environment.IsDevelopment())
 }
 
 app.Run();
-
-//// Optional: Additional seed method
-//static void SeedDatabase(ApplicationDbContext context)
-//{
-//    // Add any additional seed data here
-//    if (!context.Shareholders.Any())
-//    {
-//        // Database is empty, seed it
-//        context.SaveChanges();
-//    }
-
-//}

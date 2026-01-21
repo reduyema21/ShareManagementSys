@@ -128,8 +128,14 @@ namespace SaccoShareManagementSys.Services
             if (transaction == null)
                 return (false, "Transaction not found");
 
+            // Keep transaction type
             transaction.TransactionType = model.TransactionType;
-            transaction.Amount = model.Amount;
+
+            //  preserve the sign convention (Debit stored as negative)
+            transaction.Amount = model.TransactionType == "Debit"
+                ? -Math.Abs(model.Amount)  // ensure negative
+                : Math.Abs(model.Amount);  // ensure positive
+
             transaction.Description = model.Description;
             transaction.PaymentMethod = model.PaymentMethod;
             transaction.Status = model.Status;

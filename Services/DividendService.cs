@@ -207,62 +207,69 @@ namespace SaccoShareManagementSys.Services
         // =======================
         public async Task<(bool Success, string Message)> DistributeDividendAsync(int dividendId)
         {
-            using var transaction = await _context.Database.BeginTransactionAsync();
-            try
+            var strategy = _context.Database.CreateExecutionStrategy();
+
+            return await strategy.ExecuteAsync(async () =>
             {
-                var dividend = await _context.Dividends.FirstOrDefaultAsync(d => d.DividendId == dividendId);
-                if (dividend == null) return (false, "Dividend not found");
-                if (dividend.Status == "Distributed") return (false, "Dividend has already been distributed");
+                // All operations inside this lambda are retriable
+                await using var transaction = await _context.Database.BeginTransactionAsync();
 
-                var shareholders = await _context.Shareholders
-                    .Where(s => s.Status == "Active" && s.TotalShares > 0)
-                    .ToListAsync();
-
-                if (!shareholders.Any()) return (false, "No active shareholders found");
-
-                var totalShares = shareholders.Sum(s => s.TotalShares);
-                var dividendPerShare = dividend.TotalDividendPaid / totalShares;
-
-                foreach (var shareholder in shareholders)
+                try
                 {
-                    var shareholderDividend = shareholder.TotalShares * dividendPerShare;
+                    var dividend = await _context.Dividends.FirstOrDefaultAsync(d => d.DividendId == dividendId);
+                    if (dividend == null) return (false, "Dividend not found");
+                    if (dividend.Status == "Distributed") return (false, "Dividend has already been distributed");
 
-                    var share = await _context.Shares
-                        .FirstOrDefaultAsync(s => s.ShareholderId == shareholder.ShareholderId);
+                    var shareholders = await _context.Shareholders
+                        .Where(s => s.Status == "Active" && s.TotalShares > 0)
+                        .ToListAsync();
 
-                    if (share != null)
+                    if (!shareholders.Any()) return (false, "No active shareholders found");
+
+                    var totalShares = shareholders.Sum(s => s.TotalShares);
+                    var dividendPerShare = dividend.TotalDividendPaid / totalShares;
+
+                    foreach (var shareholder in shareholders)
                     {
-                        var tx = new Transaction
+                        var shareholderDividend = shareholder.TotalShares * dividendPerShare;
+
+                        var share = await _context.Shares
+                            .FirstOrDefaultAsync(s => s.ShareholderId == shareholder.ShareholderId);
+
+                        if (share != null)
                         {
-                            ShareId = share.ShareId,
-                            TransactionType = "Dividend",
-                            Amount = shareholderDividend,
-                            TransactionDate = dividend.DistributionDate,
-                            Description = $"Dividend for {new DateTime(dividend.Year, dividend.Month, 1):MMMM yyyy}",
-                            PaymentMethod = "Dividend",
-                            Status = "Completed",
-                            CreatedAt = DateTime.Now
-                        };
+                            var tx = new Transaction
+                            {
+                                ShareId = share.ShareId,
+                                TransactionType = "Dividend",
+                                Amount = shareholderDividend,
+                                TransactionDate = dividend.DistributionDate,
+                                Description = $"Dividend for {new DateTime(dividend.Year, dividend.Month, 1):MMMM yyyy}",
+                                PaymentMethod = "Dividend",
+                                Status = "Completed",
+                                CreatedAt = DateTime.Now
+                            };
 
-                        _context.Transactions.Add(tx);
-                        shareholder.CurrentBalance += shareholderDividend;
+                            _context.Transactions.Add(tx);
+                            shareholder.CurrentBalance += shareholderDividend;
+                        }
                     }
+
+                    dividend.Status = "Distributed";
+                    dividend.UpdatedAt = DateTime.Now;
+
+                    await _context.SaveChangesAsync();
+                    await transaction.CommitAsync();
+
+                    return (true, "Dividend distributed successfully");
                 }
-
-                dividend.Status = "Distributed";
-                dividend.UpdatedAt = DateTime.Now;
-
-                await _context.SaveChangesAsync();
-                await transaction.CommitAsync();
-
-                return (true, "Dividend distributed successfully");
-            }
-            catch (Exception ex)
-            {
-                await transaction.RollbackAsync();
-                _logger.LogError(ex, "Error distributing dividend");
-                return (false, $"An error occurred: {ex.Message}");
-            }
+                catch (Exception ex)
+                {
+                    await transaction.RollbackAsync();
+                    _logger.LogError(ex, "Error distributing dividend");
+                    return (false, $"An error occurred: {ex.Message}");
+                }
+            });
         }
 
         // =======================

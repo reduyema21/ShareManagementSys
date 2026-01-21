@@ -1,4 +1,7 @@
 ﻿@using Microsoft.AspNetCore.Identity
+@using SaccoShareManagementSys.Data
+@using SaccoShareManagementSys.Models
+@using Microsoft.EntityFrameworkCore
 
 @{
     var path = Context.Request.Path.Value?.ToLower() ?? string.Empty;
@@ -101,10 +104,25 @@
 
                     <!-- User Panel -->
                     <div class="user-panel mt-3 pb-3 mb-3 d-flex">
+                        @{
+                            var userId = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
+
+                            // Get ApplicationDbContext from DI (non-generic version)
+                            var db = Context.RequestServices.GetService(typeof(ApplicationDbContext)) as ApplicationDbContext;
+
+                            // Get profile image for current user
+                            var img = db?.ProfileImg?.FirstOrDefault(p => p.UserId == userId);
+
+                            var profileImgUrl = img != null
+                            ? Url.Action("ShowImage", "ProfileImg", new { id = img.Id, v = DateTime.Now.Ticks })
+                            : Url.Content("~/AdminLTE/dist/img/user2-160x160.jpg");
+                        }
+
                         <div class="image">
-                            <img src="@Url.Content("~/AdminLTE/dist/img/user2-160x160.jpg")"
-                                 class="img-circle elevation-2" alt="User Image">
+                            <img src="@profileImgUrl" class="img-circle elevation-2" alt="User Image">
                         </div>
+
+
                         <div class="info">
                             <a href="#" class="d-block">
                                 @if (User.Identity != null && User.Identity.IsAuthenticated)
@@ -119,6 +137,10 @@
                                     {
                                         <span>(Member)</span>
                                     }
+                                    <!-- DEBUG: show UserId -->
+                                    <p style="color:white;font-size:10px">
+                                        UserId: @User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value
+                                    </p>
                                 }
                                 else
                                 {
@@ -178,11 +200,27 @@
                                     </a>
                                 </li>
 
-                                <li class="nav-item">
+                                @* <li class="nav-item">
                                     <a asp-controller="UserRoles" asp-action="Assign" class="btn btn-sm btn-primary m-3">
                                         <i class="fas fa-user-tag"></i> Assign Role
                                     </a>
-                                </li>
+                                </li> *@
+                                @if (User.IsInRole("Admin") || User.IsInRole("Member"))
+                                {
+                                    <li class="nav-item mt-2">
+                                        <a asp-controller="ProfileImg" asp-action="Upload" class="btn btn-sm btn-primary w-100">
+                                            <i class="fas fa-image"></i> Upload Profile Image
+                                        </a>
+                                    </li>
+
+                                    <li class="nav-item mt-1">
+                                        <a asp-controller="ProfileImg" asp-action="ViewImage" class="btn btn-sm btn-info w-100">
+                                            <i class="fas fa-eye"></i> View My Profile Image
+                                        </a>
+                                    </li>
+                                }
+
+
                             }
 
                             @* ================= MEMBER MENU ================= *@

@@ -133,7 +133,7 @@
                     </div>
                     <div>
                         <h6 class="text-muted mb-1">Total Shares Value</h6>
-                        <h4 class="mb-0">KES @((Model.TotalSharesValue / 1000).ToString("N0"))K</h4>
+                        <h4 class="mb-0">ETB @((Model.TotalSharesValue / 1000).ToString("N0"))K</h4>
                         <small class="text-muted">@Model.TotalCertificates certificates</small>
                     </div>
                 </div>
@@ -177,7 +177,7 @@
                     </div>
                     <div>
                         <h6 class="text-muted mb-1">Dividends Paid</h6>
-                        <h4 class="mb-0">KES @((Model.TotalDividendsPaid / 1000).ToString("N0"))K</h4>
+                        <h4 class="mb-0">ETB @((Model.TotalDividendsPaid / 1000).ToString("N0"))K</h4>
                         <small class="text-muted">YTD Total</small>
                     </div>
                 </div>
@@ -242,7 +242,7 @@
                                     <td>#@(i + 1)</td>
                                     <td>@shareholder.FullName</td>
                                     <td>@shareholder.TotalShares.ToString("N2")</td>
-                                    <td>KES @shareholder.CurrentBalance.ToString("N0")</td>
+                                    <td>ETB @shareholder.CurrentBalance.ToString("N0")</td>
                                 </tr>
                             }
                         </tbody>

@@ -377,45 +377,37 @@ namespace SaccoShareManagementSys.Controllers
         //        debits = new[] { debits }
         //    });
         //}
-        [HttpGet]
+
         [HttpGet]
         public async Task<IActionResult> GetTransactionFlow()
         {
-            var transactions = await _context.ShareTransactions
+            // Group on the DB side by year/month to get correct monthly aggregates and handle many records
+            var grouped = await _context.ShareTransactions
                 .Where(t => t.Status == "Completed")
-                .OrderBy(t => t.TransactionDate)
+                .GroupBy(t => new { Year = t.TransactionDate.Year, Month = t.TransactionDate.Month })
+                .OrderBy(g => g.Key.Year)
+                .ThenBy(g => g.Key.Month)
+                .Select(g => new
+                {
+                    Year = g.Key.Year,
+                    Month = g.Key.Month,
+                    Credits = g.Where(t => t.Amount > 0).Sum(t => (decimal?)t.Amount) ?? 0m,
+                    Debits = g.Where(t => t.Amount < 0).Sum(t => (decimal?)(-t.Amount)) ?? 0m
+                })
                 .ToListAsync();
 
-            // Get distinct transaction dates
-            var transactionDates = transactions
-                .Select(t => t.TransactionDate.Date)
-                .Distinct()
-                .OrderBy(d => d)
-                .ToList();
-
-            var labels = transactionDates.Select(d => d.ToString("MMM dd")).ToArray();
-
-            var credits = transactionDates.Select(date =>
-                transactions
-                    .Where(t => t.TransactionDate.Date == date &&
-                                (t.TransactionType == "Credit" || t.TransactionType == "Deposit" || t.TransactionType == "Dividend" || t.TransactionType == "Purchase"))
-                    .Sum(t => t.Amount)
-            ).ToArray();
-
-            var debits = transactionDates.Select(date =>
-                transactions
-                    .Where(t => t.TransactionDate.Date == date &&
-                                (t.TransactionType == "Debit" || t.TransactionType == "Withdrawal" || t.TransactionType == "Transfer"))
-                    .Sum(t => Math.Abs(t.Amount))
-            ).ToArray();
+            var labels = grouped.Select(g => new DateTime(g.Year, g.Month, 1).ToString("MMM yyyy")).ToArray();
+            var credits = grouped.Select(g => g.Credits).ToArray();
+            var debits = grouped.Select(g => g.Debits).ToArray();
 
             return Json(new
             {
-                months = labels,   // only recorded transaction dates
+                months = labels,
                 credits,
                 debits
             });
         }
+
 
 
         private async Task PopulateDropdowns(TransactionViewModel model)

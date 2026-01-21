@@ -334,30 +334,54 @@
     </script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script>
+        let transactionFlowChart;
+
         async function loadTransactionFlow() {
             const response = await fetch('/Transactions/GetTransactionFlow');
             const result = await response.json();
 
-            const flowCtx = document.getElementById('transactionFlowChart').getContext('2d');
-            new Chart(flowCtx, {
+            const ctx = document.getElementById('transactionFlowChart').getContext('2d');
+
+            if (transactionFlowChart) transactionFlowChart.destroy();
+
+            const credits = result.credits.map(Number);
+            const debits = result.debits.map(Number);
+
+            transactionFlowChart = new Chart(ctx, {
                 type: 'bar',
                 data: {
-                    labels: result.months, //to populate the x-axis
+                    labels: result.months,
                     datasets: [
-                        { label: 'Credits', data: result.credits, backgroundColor: 'rgba(25, 135, 84, 0.7)', borderColor: 'rgb(25, 135, 84)', borderWidth: 1 },
-                        { label: 'Debits', data: result.debits, backgroundColor: 'rgba(220, 53, 69, 0.7)', borderColor: 'rgb(220, 53, 69)', borderWidth: 1 }
+                        { label: 'Credits', data: credits, backgroundColor: 'rgba(25, 135, 84, 0.7)' },
+                        { label: 'Debits', data: debits, backgroundColor: 'rgba(220, 53, 69, 0.7)' }
                     ]
                 },
                 options: {
                     responsive: true,
                     maintainAspectRatio: false,
-                    scales: { y: { beginAtZero: true, ticks: { callback: function(v) { return 'Birr ' + (v/1000) + 'K'; } } } },
-                    plugins: { legend: { display: true, position: 'top' }, tooltip: { callbacks: { label: ctx => ctx.dataset.label + ': Birr ' + ctx.parsed.y.toLocaleString() } } }
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            ticks: {
+                                callback: value => 'Birr ' + value.toLocaleString()
+                            }
+                        }
+                    },
+                    plugins: {
+                        tooltip: {
+                            callbacks: {
+                                label: ctx => `${ctx.dataset.label}: Birr ${ctx.parsed.y.toLocaleString()}`
+                            }
+                        }
+                    }
                 }
             });
         }
+
         loadTransactionFlow();
     </script>
+
+
 }
 
 @functions {
